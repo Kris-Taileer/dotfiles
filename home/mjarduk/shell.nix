@@ -12,5 +12,9 @@
     shellAliases = {
       switch = "nix run home-manager/master -- switch --flake ~/dots#mjarduk";
     };
+
+    initContent = ''
+      export PATH="$HOME/.local/bin:$PATH"
+    '';
   };
 }
