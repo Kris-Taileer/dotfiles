@@ -1,4 +1,4 @@
-{ ... }:
+{ config, pkgs, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -10,10 +10,14 @@
     };
 
     shellAliases = {
-      switch = "nix run home-manager/master -- switch --flake ~/dots#mjarduk";
+      switch = "home-manager switch --flake ${config.home.homeDirectory}/dots#mjarduk";
+      switch-darwin = "sudo darwin-rebuild switch --flake ${config.home.homeDirectory}/dots#marbook";
     };
 
     initContent = ''
+      ${pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      ''}
       export PATH="$HOME/.local/bin:$PATH"
     '';
   };

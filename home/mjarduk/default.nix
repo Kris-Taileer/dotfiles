@@ -1,12 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, homeDirectory, ... }:
 {
   home.username = "mjarduk";
-  home.homeDirectory = "/home/mjarduk";
+  home.homeDirectory = homeDirectory;
   home.stateVersion = "25.11";
 
   imports = [
     ./shell.nix
   ];
+
+
 
   # Global packages that do not require complex Nix expressions
   home.packages = with pkgs; [
