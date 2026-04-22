@@ -10,8 +10,8 @@
     };
 
     shellAliases = {
-      switch = "home-manager switch --flake ${config.home.homeDirectory}/dots#mjarduk";
-      switch-darwin = "sudo darwin-rebuild switch --flake ${config.home.homeDirectory}/dots#marbook";
+      switch = "home-manager switch --flake ${config.home.homeDirectory}/dots#mjarduk; omz reload";
+      switch-darwin = "sudo darwin-rebuild switch --flake ${config.home.homeDirectory}/dots#marbook; omz reload";
     };
 
     initContent = ''
