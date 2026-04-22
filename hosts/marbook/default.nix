@@ -13,6 +13,7 @@
 
   environment.systemPackages = with pkgs; [
     vim
+    smartmontools
     python3
     git
   ];

@@ -1,7 +1,13 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     anki
+    android-tools
+    duti
+    ghostty-bin
     keepassxc
+    nodejs
+    qbittorrent-enhanced
+    jetbrains.idea
     obsidian
     syncthing-macos
     thunderbird
@@ -14,6 +20,8 @@
       "audacious"
       "ocp"
     ];
-    casks = [ "vesktop" ];
+    casks = [
+      "vesktop"
+    ];
   };
 }
