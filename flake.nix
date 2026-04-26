@@ -48,6 +48,7 @@
           ./hosts/server/generic
           ./hosts/server/generic/vmwguest.nix
           ./hosts/server/combine.nix
+          ./hardware/combine.nix
         ];
       };
     };
