@@ -43,6 +43,10 @@
   };
 
   services.fstrim.enable = true;
+  services.journald.extraConfig = ''
+    SystemMaxUse=500M
+    MaxRetentionSec=1month
+  '';
   services.openssh = {
     enable = true;
     settings = {
@@ -71,6 +75,9 @@
         grub.enable = true;
         grub.device = settings.biosDevice;
       };
+
+  boot.tmp.useTmpfs = true;
+  boot.tmp.tmpfsSize = "25%";
 
   boot.kernelParams = lib.optionals (!(settings.bareMetal or false)) [
     "elevator=none"
