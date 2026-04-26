@@ -19,6 +19,7 @@
     commonSettings = {
       username = "mjarduk";
       sshPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP30FsTAhKNGSnDSXIK67xRmeVAzmzAoLzXa88r8hjEO mjarduk@marmar";
+      bareMetal = false;
     };
   in{
     homeConfigurations."mjarduk" = let

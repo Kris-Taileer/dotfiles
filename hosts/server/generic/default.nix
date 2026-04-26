@@ -1,10 +1,15 @@
-{ pkgs, settings, ... }:
+{ pkgs, settings, lib, ... }:
 {
   nix = {
+    settings = {
+      max-jobs = "auto";
+      auto-optimise-store = true;
+    };
+
     gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 14d";
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
     };
 
     extraOptions = ''
@@ -17,6 +22,7 @@
   networking.hostName = settings.hostname;
 
   users.defaultUserShell = pkgs.zsh;
+  users.mutableUsers = false;
   users.users.${settings.username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -37,7 +43,22 @@
   };
 
   services.fstrim.enable = true;
-  nix.settings.auto-optimise-store = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "no";
+      AllowUsers = [ settings.username ];
+    };
+
+    extraConfig = lib.optionalString (settings.sshPublic or false) ''
+      MaxAuthTries 3
+      PerSourcePenalties crash:3600s authfail:3600s max:86400s
+    '';
+  };
+
+  powerManagement.cpuFreqGovernor = lib.mkIf (settings.bareMetal or false) "performance";
 
   boot.loader =
     if settings.uefi then
@@ -50,6 +71,17 @@
         grub.enable = true;
         grub.device = settings.biosDevice;
       };
+
+  boot.kernelParams = lib.optionals (!(settings.bareMetal or false)) [
+    "elevator=none"
+  ];
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+    "net.core.somaxconn" = 4096;
+  } // lib.optionalAttrs (settings.bareMetal or false) {
+    "kernel.sched_migration_cost_ns" = 5000000;
+  };
 
   system.stateVersion = "25.11";
 }
