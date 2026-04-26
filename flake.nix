@@ -39,7 +39,6 @@
       combine = let
         settings = commonSettings // {
           hostname = "combine";
-          uefi = true;
         };
       in nixpkgs.lib.nixosSystem {
         specialArgs = { inherit settings; };

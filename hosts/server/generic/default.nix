@@ -42,7 +42,7 @@
     };
   };
 
-  services.fstrim.enable = true;
+  services.fstrim.enable = settings.bareMetal or false;
   services.journald.extraConfig = ''
     SystemMaxUse=500M
     MaxRetentionSec=1month
@@ -64,17 +64,8 @@
 
   powerManagement.cpuFreqGovernor = lib.mkIf (settings.bareMetal or false) "performance";
 
-  boot.loader =
-    if settings.uefi then
-      {
-        systemd-boot.enable = true;
-        efi.canTouchEfiVariables = true;
-      }
-    else
-      {
-        grub.enable = true;
-        grub.device = settings.biosDevice;
-      };
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "25%";
@@ -85,6 +76,10 @@
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
+    "vm.dirty_ratio" = 10;
+    "vm.dirty_background_ratio" = 5;
+    "vm.dirty_expire_centisecs" = 1500;
+    "vm.dirty_writeback_centisecs" = 500;
     "net.core.somaxconn" = 4096;
   } // lib.optionalAttrs (settings.bareMetal or false) {
     "kernel.sched_migration_cost_ns" = 5000000;
