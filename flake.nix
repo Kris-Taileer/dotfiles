@@ -19,6 +19,7 @@
     commonSettings = {
       username = "mjarduk";
       sshPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP30FsTAhKNGSnDSXIK67xRmeVAzmzAoLzXa88r8hjEO mjarduk@marmar";
+      password = "$6$FvuFvW5la529F.tQ$KG9jPlANaLVqw/L9MxsGii25oGQzY6LMoTTwmQeMlmV6vvT/0vGczIomIvPisC4tg9Z0tklrlkYqx6SKrMgkJ.";
       bareMetal = false;
     };
   in{

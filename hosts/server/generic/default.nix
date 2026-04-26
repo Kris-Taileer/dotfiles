@@ -29,6 +29,7 @@
     openssh.authorizedKeys.keys = [
       settings.sshPubkey
     ];
+    hashedPassword = settings.password;
   };
 
   programs.zsh = {
