@@ -4,7 +4,7 @@
   age.secrets.combine_keys.file = ../../../secrets/combine_keys.age;
 
   imports = [
-    ./garage.nix
+    # ./garage.nix
   ];
 
   environment.systemPackages = with pkgs; [
