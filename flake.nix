@@ -14,7 +14,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, arion, ... }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, ... }:
   let
     commonSettings = {
       username = "mjarduk";

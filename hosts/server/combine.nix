@@ -13,14 +13,44 @@
 
   services.garage = {
     enable = true;
-    settings.metadata_dir = "/srv/s3/meta";
-    settings.data_dir = "/srv/s3/data";
+    settings = {
+      metadata_dir = "/srv/s3/meta";
+      data_dir = "/srv/s3/data";
+
+      "rpc_bind_addr" = "[::]:3901";
+      "rpc_public_addr" = "127.0.0.1:3901";
+
+      "s3_web" = {
+        "bind_addr" = "[::]:3902";
+        "index" = "index.html";
+      };
+
+      "s3_api" = {
+        "s3_region" = "garage";
+        "api_bind_addr" = "[::]:3900";
+      };
+
+      "admin" = {
+        "api_bind_addr" = "[::]:3903";
+      };
+    };
+
     package = pkgs.garage;
   };
 
   services.prometheus = {
     enable = true;
     port = 9000;
+
+    globalConfig.scrape_interval = "10s"; # "1m"
+    scrapeConfigs = [
+      {
+        job_name = "s3";
+        static_configs = [{
+          targets = [ "localhost:3903" ];
+        }];
+      }
+    ];
   };
 
   services.grafana = {
