@@ -1,6 +1,8 @@
 { pkgs, ... }: {
   security.sudo.wheelNeedsPassword = false;
 
+  age.secrets.combine_keys.file = ../../../secrets/combine_keys.age;
+
   imports = [
     ./garage.nix
   ];

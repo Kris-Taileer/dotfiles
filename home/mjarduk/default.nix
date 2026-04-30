@@ -1,4 +1,4 @@
-{ pkgs, homeDirectory, ... }:
+{ pkgs, homeDirectory, inputs, ... }:
 {
   home.username = "mjarduk";
   home.homeDirectory = homeDirectory;
@@ -14,6 +14,7 @@
     nixd
     nil
     nixfmt
+    inputs.agenix.packages.${pkgs.system}.default
   ];
 
   programs.home-manager.enable = true;

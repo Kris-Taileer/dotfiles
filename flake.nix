@@ -8,13 +8,15 @@
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
+    agenix.url = "github:ryantm/agenix";
+
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, agenix, ... }:
   let
     commonSettings = {
       username = "mjarduk";
@@ -27,8 +29,11 @@
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
     in home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
-      modules = [ ./home/mjarduk ];
-      extraSpecialArgs = { homeDirectory = "/home/mjarduk"; };
+      extraSpecialArgs = { homeDirectory = "/home/mjarduk"; inherit inputs; };
+      modules = [
+        agenix.homeManagerModules.default
+        ./home/mjarduk
+      ];
     };
 
     darwinConfigurations."marbook" = nix-darwin.lib.darwinSystem {
@@ -49,6 +54,7 @@
           ./hosts/server/generic/vmwguest.nix
           ./hosts/server/combine
           ./hardware/combine.nix
+          agenix.nixosModules.default
         ];
       };
     };
