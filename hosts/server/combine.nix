@@ -11,6 +11,7 @@
     enable = true;
     settings.metadata_dir = "/srv/s3/meta";
     settings.data_dir = "/srv/s3/data";
+    package = pkgs.garage;
   };
 
   services.prometheus = {
