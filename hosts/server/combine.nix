@@ -6,6 +6,15 @@
     git
   ];
 
+  users.users = {
+    garage = {
+      isSystemUser = true;
+      group = "garage";
+    };
+  };
+
+  users.groups.garage = {};
+
   systemd.tmpfiles.rules = [
     "d /srv/s3/meta 0700 garage garage -"
     "d /srv/s3/data 0700 garage garage -"
@@ -35,6 +44,12 @@
       "admin" = {
         "api_bind_addr" = "[::]:3903";
       };
+    };
+
+    serviceConfig = {
+      DynamicUser = false;
+      User = "garage";
+      Group = "garage";
     };
 
     package = pkgs.garage;
