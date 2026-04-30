@@ -47,7 +47,7 @@
           { nixpkgs.hostPlatform = "x86_64-linux"; }
           ./hosts/server/generic
           ./hosts/server/generic/vmwguest.nix
-          ./hosts/server/combine.nix
+          ./hosts/server/combine
           ./hardware/combine.nix
         ];
       };

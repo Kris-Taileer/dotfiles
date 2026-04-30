@@ -1,11 +1,4 @@
 { pkgs, ... }: {
-  security.sudo.wheelNeedsPassword = false;
-
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-  ];
-
   users.users = {
     garage = {
       isSystemUser = true;
@@ -46,37 +39,12 @@
       };
     };
 
-    serviceConfig = {
-      DynamicUser = false;
-      User = "garage";
-      Group = "garage";
-    };
-
     package = pkgs.garage;
   };
 
-  services.prometheus = {
-    enable = true;
-    port = 9000;
-
-    globalConfig.scrape_interval = "10s"; # "1m"
-    scrapeConfigs = [
-      {
-        job_name = "s3";
-        static_configs = [{
-          targets = [ "localhost:3903" ];
-        }];
-      }
-    ];
-  };
-
-  services.grafana = {
-    enable = true;
-    settings.server = {
-      http_addr = "127.0.0.1";
-      http_port = 3000;
-      enforce_domain = true;
-      enable_gzip = true;
-    };
+  systemd.services.garage.serviceConfig = {
+    DynamicUser = false;
+    User = "garage";
+    Group = "garage";
   };
 }
