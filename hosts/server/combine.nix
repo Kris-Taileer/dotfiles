@@ -23,11 +23,13 @@
       "s3_web" = {
         "bind_addr" = "[::]:3902";
         "index" = "index.html";
+        "root_domain" = ".web.ar-iss.net";
       };
 
       "s3_api" = {
         "s3_region" = "garage";
         "api_bind_addr" = "[::]:3900";
+        "root_domain" = ".s3.ar-iss.net";
       };
 
       "admin" = {
