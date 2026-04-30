@@ -2,9 +2,13 @@
   security.sudo.wheelNeedsPassword = false;
 
   environment.systemPackages = with pkgs; [
-    javaPackages.compiler.temurin-bin.jdk-25
     vim
     git
+  ];
+
+  systemd.tmpfiles.rules = [
+    "d /srv/s3/meta 0744 root root -"
+    "d /srv/s3/data 0744 root root -"
   ];
 
   services.garage = {
