@@ -34,12 +34,16 @@
 
   programs.zsh = {
     enable = true;
-    oh-my-zsh = {
+    ohMyZsh = {
       enable = true;
       theme = "darkblood";
       plugins = [
         "git"
       ];
+    };
+
+    shellAliases = {
+      switch = "nixos-rebuild switch --flake /etc/nixos#${settings.hostname}; omz reload";
     };
   };
 
