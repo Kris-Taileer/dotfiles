@@ -36,7 +36,7 @@
     enable = true;
     oh-my-zsh = {
       enable = true;
-      theme = "lambda";
+      theme = "darkblood";
       plugins = [
         "git"
       ];

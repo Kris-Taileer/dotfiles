@@ -1,4 +1,4 @@
-{ pkgs, settings, ... }: {
+{ pkgs, ... }: {
   security.sudo.wheelNeedsPassword = false;
 
   environment.systemPackages = with pkgs; [
