@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
   users.users = {
     garage = {
       isSystemUser = true;
@@ -16,7 +16,7 @@
   services.garage = {
     enable = true;
     settings = let
-    keys = builtins.split "\n" (builtins.readFile /run/agenix/combine_keys);
+    keys = builtins.split "\n" (builtins.readFile config.age.secrets.combine_keys.path);
     in {
       metadata_dir = "/srv/s3/meta";
       data_dir = "/srv/s3/data";
