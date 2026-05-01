@@ -18,6 +18,7 @@
     settings = {
       metadata_dir = "/srv/s3/meta";
       data_dir = "/srv/s3/data";
+      "replication_factor" = 1;
 
       "rpc_bind_addr" = "[::]:3901";
       "rpc_public_addr" = "127.0.0.1:3901";
