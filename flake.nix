@@ -20,7 +20,10 @@
   let
     commonSettings = {
       username = "mjarduk";
-      sshPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP30FsTAhKNGSnDSXIK67xRmeVAzmzAoLzXa88r8hjEO mjarduk@marmar";
+      sshPubkeys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP30FsTAhKNGSnDSXIK67xRmeVAzmzAoLzXa88r8hjEO mjarduk@marmar"
+        "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBn0hysw8HdKRBT8500YrZwP0mqi1vrPztQxnbMkBuNEAAAABHNzaDo= mjarduk@gmail.com"
+      ];
       password = "$6$FvuFvW5la529F.tQ$KG9jPlANaLVqw/L9MxsGii25oGQzY6LMoTTwmQeMlmV6vvT/0vGczIomIvPisC4tg9Z0tklrlkYqx6SKrMgkJ.";
       bareMetal = false;
     };

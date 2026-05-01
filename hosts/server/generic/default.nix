@@ -26,9 +26,7 @@
   users.users.${settings.username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      settings.sshPubkey
-    ];
+    openssh.authorizedKeys.keys = settings.sshPubkeys;
     hashedPassword = settings.password;
   };
 
