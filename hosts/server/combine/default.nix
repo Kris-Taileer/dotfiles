@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   security.sudo.wheelNeedsPassword = false;
 
-  age.secrets.combine_keys.file = ../../../secrets/combine_keys.age;
+  age.secrets.combine_garage_keys.file = ../../../secrets/combine_garage_keys.age;
 
   imports = [
     ./garage.nix
