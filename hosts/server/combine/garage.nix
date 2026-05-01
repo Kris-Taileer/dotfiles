@@ -15,15 +15,12 @@
 
   services.garage = {
     enable = true;
-    settings = let
-    keys = builtins.split "\n" (builtins.readFile config.age.secrets.combine_keys.path);
-    in {
+    settings = {
       metadata_dir = "/srv/s3/meta";
       data_dir = "/srv/s3/data";
 
       "rpc_bind_addr" = "[::]:3901";
       "rpc_public_addr" = "127.0.0.1:3901";
-      "rpc_secret" = keys[0];
 
       "s3_web" = {
         "bind_addr" = "[::]:3902";
@@ -39,9 +36,10 @@
 
       "admin" = {
         "api_bind_addr" = "[::]:3903";
-        "admin_token" = keys[1];
       };
     };
+
+    environmentFile = config.age.secrets.combine_garage_keys.path;
 
     package = pkgs.garage;
   };
