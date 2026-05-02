@@ -1,16 +1,17 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    anki
     android-tools
     duti
     ghostty-bin
     keepassxc
     nodejs
     qbittorrent-enhanced
-    jetbrains.idea
     obsidian
     syncthing-macos
+    utm
+    vlc-bin
     thunderbird
+    xld
     zed-editor
   ];
 
@@ -22,6 +23,9 @@
     ];
     casks = [
       "vesktop"
+      "anki"
+      "prismlauncher"
+      "milkytracker"
     ];
   };
 }
