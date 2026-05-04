@@ -1,4 +1,4 @@
-{ self, pkgs, home-manager, ... }:
+{ self, pkgs, home-manager, inputs, ... }:
 {
   imports = [
     home-manager.darwinModules.home-manager
@@ -9,6 +9,7 @@
   home-manager.extraSpecialArgs = {
     username = "mjarduk";
     homeDirectory = "/Users/mjarduk";
+    inherit inputs;
   };
 
   environment.systemPackages = with pkgs; [

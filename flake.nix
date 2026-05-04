@@ -14,9 +14,14 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, agenix, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, home-manager-unstable, agenix, ... }:
   let
     commonSettings = {
       username = "mjarduk";
@@ -40,7 +45,7 @@
     };
 
     darwinConfigurations."marbook" = nix-darwin.lib.darwinSystem {
-      specialArgs = { inherit self home-manager; };
+      specialArgs = { inherit self inputs; home-manager = home-manager-unstable; };
       modules = [ ./hosts/marbook ];
     };
 

@@ -20,12 +20,20 @@
     brews = [
       "audacious"
       "ocp"
+      "omlx"
     ];
     casks = [
       "vesktop"
       "anki"
       "prismlauncher"
       "milkytracker"
+    ];
+
+    taps = [
+      {
+        name = "jundot/omlx";
+        clone_target = "https://github.com/jundot/omlx";
+      }
     ];
   };
 }
