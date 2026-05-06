@@ -26,7 +26,6 @@
     syncthing-macos
     utm
     vlc-bin
-    thunderbird
     xld
     zed-editor
   ];
