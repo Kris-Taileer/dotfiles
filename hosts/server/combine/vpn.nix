@@ -1,4 +1,6 @@
 { config, ... }: {
+  age.secrets.combine_wg_priv.file = ../../../secrets/combine_wg_priv.age;
+
   nixpkgs.overlays = [
     (final: prev: {
       amneziawg-tools = prev.amneziawg-tools.overrideAttrs (_: {
