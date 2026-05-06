@@ -32,7 +32,7 @@
   networking.wg-quick.interfaces.awg0 = {
     type = "amneziawg";
     address = [ "10.0.0.1/24" ];
-    listenPort = 51820;
+    listenPort = 46739;
     privateKeyFile = config.age.secrets.combine_wg_priv.path;
 
     extraOptions = {
