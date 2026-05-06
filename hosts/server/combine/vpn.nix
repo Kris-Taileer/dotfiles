@@ -33,17 +33,17 @@
     listenPort = 51820;
     privateKeyFile = config.age.secrets.combine_wg_priv.path;
 
-    extraConfig = ''
-      Jc = 5
-      Jmin = 50
-      Jmax = 1000
-      S1 = 42
-      S2 = 77
-      H1 = "1500000000-2000000000"
-      H2 = "3000000000-3500000000"
-      H3 = "2500000000-3000000000"
-      H4 = "700000000-1000000000"
-    '';
+    extraOptions = {
+      Jc = 5;
+      Jmin = 50;
+      Jmax = 1000;
+      S1 = 42;
+      S2 = 77;
+      H1 = "1500000000-2000000000";
+      H2 = "3000000000-3500000000";
+      H3 = "2500000000-3000000000";
+      H4 = "700000000-1000000000";
+    };
 
     peers = [{
       publicKey = "VeU3dauI19A2dWsZWLhrDDSv58Y2RlZkh23AZBye7Fg=";
