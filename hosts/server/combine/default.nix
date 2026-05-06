@@ -5,6 +5,7 @@
 
   imports = [
     ./garage.nix
+    ./vpn.nix
   ];
 
   environment.systemPackages = with pkgs; [
