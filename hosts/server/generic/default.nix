@@ -8,14 +8,12 @@
 
     gc = {
       automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 14d";
+      dates = "daily";
+      options = "--delete-older-than 3d";
     };
 
     extraOptions = ''
       experimental-features = nix-command flakes
-      keep-outputs = true
-      keep-derivations = true
     '';
   };
 
