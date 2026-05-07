@@ -53,6 +53,7 @@
       combine = let
         settings = commonSettings // {
           hostname = "combine";
+          vpnPort =   46780;
         };
       in nixpkgs.lib.nixosSystem {
         specialArgs = { inherit settings; };

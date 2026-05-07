@@ -35,13 +35,15 @@
     enable = true;
     brews = [
       "audacious"
+      "ghidra"
       "ocp"
       "omlx"
-      "ykman"
       "openssh"
+      "ykman"
       "libfido2"
     ];
     casks = [
+      "winbox"
       "vesktop"
       "anki"
       "prismlauncher"
