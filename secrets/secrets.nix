@@ -7,4 +7,5 @@ in
 {
   "combine_garage_keys.age".publicKeys = combineFiles;
   "combine_wg_priv.age".publicKeys = combineFiles;
+  "combine_wg_psk.age".publicKeys = combineFiles;
 }

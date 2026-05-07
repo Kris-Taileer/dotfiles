@@ -1,5 +1,6 @@
 { config, ... }: {
   age.secrets.combine_wg_priv.file = ../../../secrets/combine_wg_priv.age;
+  age.secrets.combine_wg_psk.file = ../../../secrets/combine_wg_psk.age;
 
   nixpkgs.overlays = [
     (final: prev: {
@@ -51,6 +52,7 @@
 
     peers = [{
       publicKey = "VeU3dauI19A2dWsZWLhrDDSv58Y2RlZkh23AZBye7Fg=";
+      presharedKeyFile = config.age.secrets.combine_wg_psk.path;
       allowedIPs = [ "10.0.0.2/32" ];
     }];
   };
