@@ -19,6 +19,7 @@
     amneziawg-go
     duti
     ghostty-bin
+    gnupg
     keepassxc
     nodejs
     qbittorrent-enhanced
@@ -36,6 +37,9 @@
       "audacious"
       "ocp"
       "omlx"
+      "ykman"
+      "openssh"
+      "libfido2"
     ];
     casks = [
       "vesktop"
