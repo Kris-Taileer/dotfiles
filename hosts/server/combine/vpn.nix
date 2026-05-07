@@ -38,7 +38,7 @@
 
     extraOptions = {
       MTU = 1376;
-      Jc = 4;
+      Jc = 6;
       Jmin = 10;
       Jmax = 50;
       S1 = 35;
