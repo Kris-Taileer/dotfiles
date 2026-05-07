@@ -37,6 +37,7 @@
     privateKeyFile = config.age.secrets.combine_wg_priv.path;
 
     extraOptions = {
+      MTU = 1376;
       Jc = 4;
       Jmin = 10;
       Jmax = 50;
