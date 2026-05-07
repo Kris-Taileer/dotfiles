@@ -19,6 +19,7 @@
     amneziawg-go
     duti
     ghostty-bin
+    gnupg
     keepassxc
     nodejs
     qbittorrent-enhanced
@@ -34,10 +35,15 @@
     enable = true;
     brews = [
       "audacious"
+      "ghidra"
       "ocp"
       "omlx"
+      "openssh"
+      "ykman"
+      "libfido2"
     ];
     casks = [
+      "winbox"
       "vesktop"
       "anki"
       "prismlauncher"

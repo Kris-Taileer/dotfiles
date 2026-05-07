@@ -7,6 +7,7 @@
   imports = [
     ./shell.nix
     ./git.nix
+    ./ssh.nix
   ];
 
   # Global packages that do not require complex Nix expressions

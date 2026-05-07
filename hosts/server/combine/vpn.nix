@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, settings, ... }: {
   age.secrets.combine_wg_priv.file = ../../../secrets/combine_wg_priv.age;
   age.secrets.combine_wg_psk.file = ../../../secrets/combine_wg_psk.age;
 
@@ -28,12 +28,12 @@
     })
   ];
 
-  networking.firewall.allowedUDPPorts = [ 51820 ];
+  networking.firewall.allowedUDPPorts = [ settings.vpnPort ];
 
   networking.wg-quick.interfaces.awg0 = {
     type = "amneziawg";
     address = [ "10.0.0.1/24" ];
-    listenPort = 46739;
+    listenPort = settings.vpnPort;
     privateKeyFile = config.age.secrets.combine_wg_priv.path;
 
     extraOptions = {
