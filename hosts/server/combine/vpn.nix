@@ -27,7 +27,7 @@
     })
   ];
 
-  networking.firewall.allowedUDPPorts = [ 51820 ];
+  networking.firewall.allowedUDPPorts = [ 46739 ];
 
   networking.wg-quick.interfaces.awg0 = {
     type = "amneziawg";
