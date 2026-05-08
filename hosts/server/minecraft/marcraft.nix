@@ -49,6 +49,12 @@ let
         description = "Override full ExecStart command (runs in WorkingDirectory)";
       };
 
+      enableCommandSocket = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable socket for command inputs";
+      };
+
       openFirewall = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -73,6 +79,20 @@ in
       lib.concatMap (server:
         lib.optional server.openFirewall server.port
       ) (lib.attrValues enabledServers);
+
+    systemd.sockets =
+      lib.mapAttrs' (name: server:
+        lib.nameValuePair "minecraft-${name}" (
+          lib.optionalAttrs (server.enableCommandSocket) {
+            wantedBy = [ "sockets.target" ];
+
+            socketConfig = {
+              ListenFIFO = "/run/marcraft/${name}";
+              Service = "minecraft-${name}.service";
+            };
+          }
+        )
+      ) enabledServers;
 
     systemd.services =
       lib.mapAttrs' (name: server:
@@ -118,6 +138,13 @@ in
             PrivateTmp = true;
             NoNewPrivileges = true;
 
+            StandardInput =
+              if server.enableCommandSocket then "socket" else null;
+            RuntimeDirectory = "marcraft";
+            RuntimeDirectoryMode = "0750";
+
+            StandardOutput = "journal";
+            StandardError = "journal";
             ProtectSystem = "strict";
             ReadWritePaths = [ server.dataDir ];
           };
