@@ -67,6 +67,21 @@
           agenix.nixosModules.default
         ];
       };
+      minecraft = let
+        settings = commonSettings // {
+          hostname = "minecraft";
+        };
+      in nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit settings; };
+        modules = [
+          { nixpkgs.hostPlatform = "x86_64-linux"; }
+          ./hosts/server/generic
+          ./hosts/server/generic/vmwguest.nix
+          ./host/minecraft
+          ./hardware/minecraft.nix
+          agenix.nixosModules.default
+        ];
+      };
     };
   };
 }
