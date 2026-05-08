@@ -37,6 +37,18 @@ let
         description = "Name of the server jar inside dataDir";
       };
 
+      forgeArgsPath = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Path to Forge unix_args.txt relative to dataDir (enables Forge launcher mode)";
+      };
+
+      serverStartCommand = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = "Override full ExecStart command (runs in WorkingDirectory)";
+      };
+
       openFirewall = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -58,11 +70,9 @@ in
 
   config = {
     networking.firewall.allowedTCPPorts =
-      lib.flatten (
-        lib.mapAttrsToList (_: server:
-          lib.optional server.openFirewall server.port
-        ) enabledServers
-      );
+      lib.concatMap (server:
+        lib.optional server.openFirewall server.port
+      ) (lib.attrValues enabledServers);
 
     systemd.services =
       lib.mapAttrs' (name: server:
@@ -80,15 +90,27 @@ in
 
             WorkingDirectory = server.dataDir;
 
-            ExecStart = lib.escapeShellArgs (
-              [ "${server.javaPackage}/bin/java" ]
-              ++ server.jvmFlags
-              ++ [
-                "-jar"
-                "${server.dataDir}/${server.serverJar}"
-                "nogui"
-              ]
-            );
+            ExecStart =
+              if server.serverStartCommand != [] then
+                lib.escapeShellArgs server.serverStartCommand
+              else if server.forgeArgsPath != null && server.forgeArgsPath != "" then
+                lib.escapeShellArgs (
+                  [ "${server.javaPackage}/bin/java" ]
+                  ++ server.jvmFlags
+                  ++ [
+                    "@${server.forgeArgsPath}"
+                  ]
+                )
+              else
+                lib.escapeShellArgs (
+                  [ "${server.javaPackage}/bin/java" ]
+                  ++ server.jvmFlags
+                  ++ [
+                    "-jar"
+                    "${server.dataDir}/${server.serverJar}"
+                    "nogui"
+                  ]
+                );
 
             Restart = "on-failure";
             RestartSec = "30s";
