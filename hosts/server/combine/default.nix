@@ -6,11 +6,6 @@
     ./vpn.nix
   ];
 
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-  ];
-
   services.prometheus = {
     enable = true;
     port = 9000;

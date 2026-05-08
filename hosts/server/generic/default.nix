@@ -45,6 +45,11 @@
     };
   };
 
+  environment.systemPackages = with pkgs; [
+    vim
+    git
+  ];
+
   services.fstrim.enable = settings.bareMetal or false;
   services.journald.extraConfig = ''
     SystemMaxUse=500M
