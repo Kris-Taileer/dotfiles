@@ -19,6 +19,8 @@
 
   networking.hostName = settings.hostname;
 
+  security.sudo.wheelNeedsPassword = false;
+
   users.defaultUserShell = pkgs.zsh;
   users.mutableUsers = false;
   users.users.${settings.username} = {
