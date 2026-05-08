@@ -77,7 +77,7 @@
           { nixpkgs.hostPlatform = "x86_64-linux"; }
           ./hosts/server/generic
           ./hosts/server/generic/vmwguest.nix
-          ./host/minecraft
+          ./host/server/minecraft
           ./hardware/minecraft.nix
           agenix.nixosModules.default
         ];
