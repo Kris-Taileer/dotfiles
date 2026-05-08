@@ -10,11 +10,6 @@
     "d /srv/minecraft/zapusk 0744 minecraft minecraft -"
   ];
 
-  services.forgeServer = {
-    enable = true;
-    dataDir = "/srv/minecraft/zapusk";
-  };
-
   # services.marcraft.zapusk = {
 
   # };
