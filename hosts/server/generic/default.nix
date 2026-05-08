@@ -34,7 +34,7 @@
     enable = true;
     ohMyZsh = {
       enable = true;
-      theme = "darkblood";
+      theme = "imajes";
       plugins = [
         "git"
       ];
