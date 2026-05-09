@@ -9,6 +9,8 @@
     "d /srv/minecraft/zapusk 0744 minecraft minecraft -"
   ];
 
+  networking.firewall.allowedUDPPorts = [ 24454 ];
+
   services.marcraft.zapusk = {
     enable = true;
 
