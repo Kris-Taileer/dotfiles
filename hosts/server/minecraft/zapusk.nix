@@ -12,7 +12,7 @@
   networking.firewall.allowedUDPPorts = [ 24454 ];
 
   services.marcraft.zapusk = {
-    enable = true;
+    enable = false;
 
     dataDir = "/srv/minecraft/zapusk";
     javaPackage = pkgs.jdk25;
