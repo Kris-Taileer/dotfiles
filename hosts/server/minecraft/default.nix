@@ -1,6 +1,6 @@
 { ... }: {
   imports = [
       ./marcraft.nix
-      ./zapusk.nix
+      ./servers.nix
   ];
 }

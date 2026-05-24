@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   age.secrets.combine_garage_keys.file = ../../../secrets/combine_garage_keys.age;
 
   imports = [
