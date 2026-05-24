@@ -48,6 +48,7 @@
   environment.systemPackages = with pkgs; [
     vim
     git
+    wget
   ];
 
   services.fstrim.enable = settings.bareMetal or false;

@@ -18,7 +18,7 @@
       ${pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
         eval "$(/opt/homebrew/bin/brew shellenv)"
       ''}
-      export PATH="$HOME/.local/bin:$PATH"
+      export PATH="$HOME/.local/bin:/home/mjarduk/.npm-global/bin:$PATH"
     '';
   };
 }
