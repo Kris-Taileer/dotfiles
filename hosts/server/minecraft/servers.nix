@@ -8,6 +8,7 @@
   systemd.tmpfiles.rules = [
     "d /srv/minecraft/zapusk 0744 minecraft minecraft -"
     "d /srv/minecraft/gtnh 0744 minecraft minecraft -"
+    "d /run/marcraft 0750 minecraft minecraft -"
   ];
 
   # networking.firewall.allowedUDPPorts = [ 24454 ];

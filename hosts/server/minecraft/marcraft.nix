@@ -81,6 +81,8 @@ in
 
             socketConfig = {
               ListenFIFO = "/run/marcraft/${name}";
+              RuntimeDirectory = "marcraft";
+              RuntimeDirectoryMode = "0750";
               Service = "minecraft-${name}.service";
             };
           }
