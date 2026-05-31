@@ -3,7 +3,6 @@
 
   imports = [
     ./garage.nix
-    ./vpn.nix
   ];
 
   services.prometheus = {

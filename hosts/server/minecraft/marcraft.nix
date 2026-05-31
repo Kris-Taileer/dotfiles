@@ -134,8 +134,6 @@ in
 
             Sockets = [ "minecraft-${name}.socket" ];
             StandardInput = "socket";
-            RuntimeDirectory = "marcraft";
-            RuntimeDirectoryMode = "0750";
 
             StandardOutput = "journal";
             StandardError = "journal";
