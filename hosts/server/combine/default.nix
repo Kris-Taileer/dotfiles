@@ -1,5 +1,7 @@
-{ ... }: {
+{ config, ... }:
+{
   age.secrets.combine_garage_keys.file = ../../../secrets/combine_garage_keys.age;
+  age.secrets.combine_grafana_secret.file = ../../../secrets/combine_grafana_secret.age;
 
   imports = [
     ./garage.nix
@@ -22,10 +24,15 @@
 
   services.grafana = {
     enable = true;
-    settings.server = {
-      http_addr = "0.0.0.0";
-      http_port = 3000;
-      enable_gzip = true;
+    settings = {
+      server = {
+        http_addr = "0.0.0.0";
+        http_port = 3000;
+        enable_gzip = true;
+      };
+      security = {
+        secret_key = "$__file{${config.age.secrets.combine_grafana_secret.path}}";
+      };
     };
   };
 
