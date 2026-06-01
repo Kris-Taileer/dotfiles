@@ -1,7 +1,10 @@
 { config, ... }:
 {
   age.secrets.combine_garage_keys.file = ../../../secrets/combine_garage_keys.age;
-  age.secrets.combine_grafana_secret.file = ../../../secrets/combine_grafana_secret.age;
+  age.secrets.combine_grafana_secret = {
+    file = ../../../secrets/combine_grafana_secret.age;
+    owner = "grafana";
+  };
 
   imports = [
     ./garage.nix
