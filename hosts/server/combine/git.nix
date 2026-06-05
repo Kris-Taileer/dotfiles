@@ -1,4 +1,4 @@
-{ settings, ... }:
+{ lib, settings, ... }:
 {
   networking.firewall.allowedTCPPorts = [ 23231 ];
 
@@ -26,4 +26,9 @@
       ];
     };
   };
+
+  systemd.services.soft-serve.serviceConfig.StateDirectory = lib.mkForce [
+    "soft-serve"
+    "soft-serve/repos"
+  ];
 }
