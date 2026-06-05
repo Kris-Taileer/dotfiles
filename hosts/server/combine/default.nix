@@ -8,6 +8,7 @@
 
   imports = [
     ./garage.nix
+    ./git.nix
   ];
 
   services.prometheus = {
