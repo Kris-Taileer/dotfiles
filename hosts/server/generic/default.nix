@@ -94,5 +94,6 @@
     "kernel.sched_migration_cost_ns" = 5000000;
   };
 
+  nixpkgs.config.allowUnfree = true;
   system.stateVersion = "25.11";
 }
