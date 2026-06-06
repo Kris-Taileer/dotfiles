@@ -8,7 +8,7 @@
       name = "marduk.ru git";
 
       ssh = {
-        public_url = "ssh://marduk.ru";
+        public_url = "ssh://tcp.marduk.ru";
       };
 
       lfs = {
