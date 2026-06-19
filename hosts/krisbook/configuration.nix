@@ -1,4 +1,4 @@
-# Edit this configuration file to define what should be installed on
+# Edit this configuration file to=<F11>'yt define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
@@ -43,9 +43,21 @@
 	autoRepeatInterval = 35;
 	windowManager.qtile.enable = true;
   };
-  services.displayManager.ly.enable = true;
-  
 
+  services.xserver.xkb = {
+	layout = "us,ru";
+	options = "grp:alt_shift_toggle";
+  };
+  
+  services.displayManager.ly = {
+  	enable = true;
+  	settings = {
+    		animation = "doom";
+    		blank_password = true;
+    		term_reset_cmd = "tput reset";
+  	};
+  };
+  nixpkgs.config.allowUnfree = true;
   
 
   # Configure keymap in X11
@@ -58,10 +70,10 @@
   # Enable sound.
   # services.pulseaudio.enable = true;
   # OR
-  # services.pipewire = {
-  #   enable = true;
-  #   pulse.enable = true;
-  # };
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
