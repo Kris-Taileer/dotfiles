@@ -1,15 +1,37 @@
 { pkgs,  ... }:
 {
 	home.packages = with pkgs; [
-                fastfetch
-                python3
-                gcc
-                nixpkgs-fmt
-                nodejs
-                neovim
-                ghidra
+		fastfetch
+		python3
+		gcc
+		nixpkgs-fmt
+		nodejs
+		neovim
+		ghidra
 		rofi
-		pkgs.ayugram-desktop
-        ];
+		ayugram-desktop
+		radare2
+		gdb
+		edb
+		strace
+		ltrace
+		binwalk
+		pwntools
+		nmap
+		wireshark
+		tcpdump
+		socat
+		netcat-gnu
+		sqlmap
+		volatility3
+		hashcat
+		john
+		claude-code
+		feh
+		btop
+		maim
+		xclip
+		upower
+	];
 
 }
