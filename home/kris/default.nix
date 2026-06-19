@@ -10,6 +10,5 @@
 	];
 	home.username = "kris";
 	home.homeDirectory = "/home/kris";
-	programs.git.enable = true;
 	home.stateVersion = "26.05";
 }
