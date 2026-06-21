@@ -32,6 +32,8 @@
 		maim
 		xclip
 		upower
+		alsa-utils
+		pavucontrol
 	];
 
 }
