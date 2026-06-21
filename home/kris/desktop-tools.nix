@@ -1,6 +1,42 @@
 { pkgs, ... }:
 let
   colors = import ./theme.nix;
+  rofiTheme = pkgs.writeText "rofi-theme.rasi" ''
+    * {
+      bg:     #0d0e1a;
+      bg-alt: #1a1830;
+      fg:     #f5f3ff;
+      accent: #ff5fc4;
+    }
+    window {
+      background-color: @bg;
+      border:           2px solid;
+      border-color:     @accent;
+      border-radius:    10px;
+      width:            480px;
+    }
+    element {
+      padding:       6px 10px;
+      border-radius: 6px;
+    }
+    element normal.normal {
+      background-color: @bg;
+      text-color:       @fg;
+    }
+    element selected.normal {
+      background-color: @accent;
+      text-color:       @bg;
+    }
+    element-text, element-icon {
+      background-color: inherit;
+      text-color:       inherit;
+    }
+    inputbar {
+      background-color: @bg-alt;
+      padding:          8px 12px;
+      border-radius:    8px;
+    }
+  '';
 in
 {
   services.picom = {
@@ -64,33 +100,6 @@ in
   programs.rofi = {
     enable = true;
     terminal = "alacritty";
-    theme = {
-      "*" = {
-        bg = "#${colors.base}";
-        bg-alt = "#${colors.surface0}";
-        fg = "#${colors.text}";
-        accent = "#${colors.pink}";
-      };
-      "window" = {
-        background-color = "@bg";
-        border = 2;
-        border-color = "@accent";
-        border-radius = 10;
-        width = 480;
-      };
-      "element-text, element-icon" = {
-        background-color = "inherit";
-        text-color = "inherit";
-      };
-      "element selected" = {
-        background-color = "@accent";
-        text-color = "@bg";
-      };
-      "inputbar" = {
-        background-color = "@bg-alt";
-        padding = "8px 12px";
-        border-radius = 8;
-      };
-    };
+    theme = "${rofiTheme}";
   };
 }

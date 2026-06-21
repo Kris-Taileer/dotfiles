@@ -1,6 +1,8 @@
 { pkgs,  ... }:
 {
 	home.packages = with pkgs; [
+		zip
+		appimage-run
 		fastfetch
 		python3
 		gcc
