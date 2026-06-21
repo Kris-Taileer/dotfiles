@@ -42,6 +42,7 @@
 	autoRepeatDelay = 200;
 	autoRepeatInterval = 35;
 	windowManager.qtile.enable = true;
+	windowManager.qtile.extraPackages = python3Packages: with python3Packages; [ qtile-extras ];
   };
 
   services.xserver.xkb = {
@@ -81,7 +82,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.kris = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "pipewire" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       tree
     ];
@@ -89,7 +90,7 @@
   };
 
   programs.firefox.enable = true;
-
+  programs.wireshark.enable = true;
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
