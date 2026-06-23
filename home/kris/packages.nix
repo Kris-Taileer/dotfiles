@@ -1,41 +1,50 @@
-{ pkgs,  ... }:
+{ pkgs, ... }:
 {
-	home.packages = with pkgs; [
-		zip
-		appimage-run
-		fastfetch
-		python3
-		gcc
-		nixpkgs-fmt
-		nodejs
-		neovim
-		ghidra
-		rofi
-		ayugram-desktop
-		radare2
-		gdb
-		edb
-		strace
-		ltrace
-		binwalk
-		pwntools
-		nmap
-		wireshark
-		tcpdump
-		socat
-		netcat-gnu
-		sqlmap
-		volatility3
-		hashcat
-		john
-		claude-code
-		feh
-		btop
-		maim
-		xclip
-		upower
-		alsa-utils
-		pavucontrol
-	];
+  home.packages = with pkgs; [
+    fastfetch
+    btop
+    tmux
+    cava
+    cbonsai
+    pipes-rs
 
+    nh
+    nix-output-monitor
+
+    python3
+    gcc
+    nodejs
+    nixpkgs-fmt
+    neovim
+    vulkan-tools
+
+    ghidra
+    radare2
+    gdb
+    edb
+    strace
+    ltrace
+    binwalk
+    pwntools
+
+    nmap
+    wireshark
+    tcpdump
+    socat
+    netcat-gnu
+    sqlmap
+
+    volatility3
+    hashcat
+    john
+
+    rofi
+    feh
+    maim
+    xclip
+    upower
+
+    ayugram-desktop
+    claude-code
+  ];
 }
