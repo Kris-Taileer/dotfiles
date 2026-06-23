@@ -33,11 +33,11 @@
   services.displayManager.ly = {
     enable = true;
     settings = {
-      animation      = "doom";
+      animation = "doom";
       blank_password = true;
       term_reset_cmd = "tput reset";
-      fg             = 7;
-      bg             = 0;
+      fg = 7;
+      bg = 0;
     };
   };
 
@@ -48,14 +48,14 @@
 
   users.users.kris = {
     isNormalUser = true;
-    extraGroups  = [ "wheel" "networkmanager" "pipewire" "wireshark" ];
-    packages     = with pkgs; [ tree ];
-    shell        = pkgs.zsh;
+    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" ];
+    packages = with pkgs; [ tree ];
+    shell = pkgs.zsh;
   };
 
-  programs.zsh.enable         = true;
-  programs.firefox.enable     = true;
-  programs.wireshark.enable   = true;
+  programs.zsh.enable = true;
+  programs.firefox.enable = true;
+  programs.wireshark.enable = true;
   programs.amnezia-vpn.enable = true;
 
   environment.systemPackages = with pkgs; [
