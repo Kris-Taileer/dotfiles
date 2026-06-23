@@ -12,7 +12,6 @@
   networking.firewall.enable = true;
 
   time.timeZone = "Europe/Moscow";
-
   hardware.graphics.enable = true;
 
   services.xserver = {
