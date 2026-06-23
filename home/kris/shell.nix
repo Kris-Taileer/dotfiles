@@ -7,21 +7,21 @@
     enableCompletion = true;
 
     shellAliases = {
-      ll          = "ls -la";
-      ".."        = "cd ..";
-      rebuild     = "nh os switch ~/nixos-dotfiles";
-      clean       = "nh clean all";
+      ll = "ls -la";
+      ".." = "cd ..";
+      rebuild = "nh os switch ~/nixos-dotfiles";
+      clean = "nh clean all";
       rebuild-nom = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos-btw |& nom";
     };
 
     oh-my-zsh = {
-      enable  = true;
-      theme   = "agnoster";
+      enable = true;
+      theme = "agnoster";
       plugins = [ "git" "sudo" "direnv" ];
     };
 
     history = {
-      size       = 10000;
+      size = 10000;
       ignoreDups = true;
     };
   };
