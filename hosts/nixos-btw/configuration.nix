@@ -88,6 +88,8 @@
     NIXOS_OZONE_WL               = "1";
     MOZ_ENABLE_WAYLAND           = "1";
     _JAVA_AWT_WM_NONREPARENTING  = "1";
+    XCURSOR_THEME                = "ComixCursors-Black";
+    XCURSOR_SIZE                 = "48";
   };
 
   nixpkgs.config.allowUnfree = true;
