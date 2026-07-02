@@ -1,0 +1,52 @@
+{ pkgs, ... }:
+{
+  home.packages = with pkgs; [
+    fastfetch
+    btop
+    tmux
+    cava
+    cbonsai
+    pipes-rs
+    nh
+    nix-output-monitor
+    gcc
+    nodejs
+    nixpkgs-fmt
+    neovim
+    vulkan-tools
+    ghidra
+    radare2
+    gdb
+    edb
+    strace
+    ltrace
+    binwalk
+    nmap
+    wireshark
+    tcpdump
+    socat
+    netcat-gnu
+    sqlmap
+    volatility3
+    hashcat
+    john
+    rofi
+    waypaper
+    swaybg
+    grim
+    slurp
+    wl-clipboard
+    wlr-randr
+    burpsuite
+    upower
+    ayugram-desktop
+    claude-code
+    zed-editor
+    kdePackages.dolphin
+    kdePackages.ark
+    qbittorrent
+    imv
+    mpv
+    zathura
+  ];
+}
