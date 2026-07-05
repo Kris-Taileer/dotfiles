@@ -7,12 +7,20 @@
   boot.loader.systemd-boot.configurationLimit = 3;
 
   networking.hostName = "nixos-btw";
+  networking.hosts = {
+    "127.0.0.1"      = [ "localhost" ];
+    "::1"            = [ "localhost" ];
+    "127.0.0.2"      = [ "nixos-btw" ];
+    "160.30.99.189"  = [ "chal" ];
+  };
   networking.networkmanager.enable = true;
   networking.networkmanager.dns = "systemd-resolved";
+  networking.networkmanager.plugins = with pkgs; [ networkmanager-openvpn ];
   networking.firewall.enable = true;
 
   time.timeZone = "Europe/Moscow";
   hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
   services.xserver = {
     enable = true;
@@ -23,6 +31,7 @@
       extraPackages = python3Packages: with python3Packages; [ qtile-extras ];
     };
     windowManager.windowmaker.enable = true;
+    desktopManager.plasma6.enable = true;
   };
 
   services.xserver.xkb = {
@@ -38,17 +47,19 @@
       term_reset_cmd = "tput reset";
       fg = 7;
       bg = 0;
+      clock = "%H:%M:%S";
     };
   };
 
   services.pipewire = {
     enable = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   users.users.kris = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" ];
+    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" ];
     packages = with pkgs; [ tree ];
     shell = pkgs.zsh;
   };
@@ -57,6 +68,26 @@
   programs.firefox.enable = true;
   programs.wireshark.enable = true;
   programs.amnezia-vpn.enable = true;
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    extraCompatPackages = with pkgs; [ proton-ge-bin ];
+  };
+  programs.gamemode.enable = true;
+
+  services.asus-numberpad-driver = {
+    enable = true;
+    layout = "up5401ea";
+    wayland = true;
+    waylandDisplay = "wayland-0";
+    runtimeDir = "/run/user/1000/";
+  };
+
+  virtualisation.docker.enable = true;
+
+  services.openssh.enable = true;
+
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
@@ -66,9 +97,18 @@
       xorg.libXext
       xorg.libXrender
       xorg.libxcb
+      xorg.xcbutil
+      xorg.xcbutilcursor
       xorg.libXi
       stdenv.cc.cc.lib
       libxkbcommon
+      fontconfig
+      freetype
+      zlib
+      glib
+      dbus
+      expat
+      openssl
     ];
   };
 
@@ -77,6 +117,8 @@
     wget
     git
     xdg-utils
+    openvpn
+    wireguard-tools
   ];
 
   fonts.packages = with pkgs; [
@@ -88,8 +130,7 @@
     NIXOS_OZONE_WL               = "1";
     MOZ_ENABLE_WAYLAND           = "1";
     _JAVA_AWT_WM_NONREPARENTING  = "1";
-    XCURSOR_THEME                = "ComixCursors-Black";
-    XCURSOR_SIZE                 = "48";
+    XCURSOR_THEME                = "catppuccin-mocha-mauve-cursors";
   };
 
   nixpkgs.config.allowUnfree = true;
