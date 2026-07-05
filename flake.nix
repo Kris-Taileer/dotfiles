@@ -13,6 +13,7 @@
 			system = "x86_64-linux";
 			modules = [
 				./hosts/nixos-btw/configuration.nix
+				./modules/asus-numberpad-driver.nix
 				home-manager.nixosModules.home-manager
 				{
 					home-manager = {
