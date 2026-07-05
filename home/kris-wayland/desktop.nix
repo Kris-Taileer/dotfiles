@@ -3,14 +3,13 @@
   home.pointerCursor = {
     package = pkgs.catppuccin-cursors.mochaMauve;
     name    = "catppuccin-mocha-mauve-cursors";
-    size    = 48;
     gtk.enable = true;
     x11.enable = true;
   };
   xdg.dataFile."applications/ida-pro.desktop".text = ''
     [Desktop Entry]
     Name=IDA Pro
-    Exec=/home/kris/ida-pro-9.3/ida
+    Exec=/home/kris/ida-pro-9.3/ida-launch.sh
     Icon=/home/kris/ida-pro-9.3/appico.png
     Terminal=false
     Type=Application
@@ -70,6 +69,13 @@
       "text/css"                       = "dev.zed.Zed.desktop";
     };
   };
+  xdg.configFile."kscreenlockerrc".text = ''
+    [Daemon]
+    Autolock=true
+    LockOnResume=true
+    Timeout=5
+  '';
+
 	home.file.".config/qtile".source = ./qtile;
 	home.file."wallpaper.png".source = ./wallpapers/wallpaper.png;
 	home.file.".config/waypaper/config.ini".text = ''
