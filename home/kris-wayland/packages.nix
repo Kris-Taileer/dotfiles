@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
+    docker-compose
+    htop
+    go
+    python3
     fastfetch
     btop
     tmux
@@ -21,6 +25,9 @@
     strace
     ltrace
     binwalk
+    unzip
+    zip
+    file
     nmap
     wireshark
     tcpdump
@@ -39,14 +46,32 @@
     wlr-randr
     burpsuite
     upower
+    discord
     ayugram-desktop
     claude-code
     zed-editor
+    kdePackages.kscreenlocker
     kdePackages.dolphin
     kdePackages.ark
+    kdePackages.konsole
+    kdePackages.kate
+    kdePackages.spectacle
+    kdePackages.gwenview
+    kdePackages.okular
+    kdePackages.plasma-nm
+    kdePackages.kinfocenter
+    kdePackages.kdeconnect-kde
+    kdePackages.kcalc
     qbittorrent
     imv
     mpv
     zathura
+    brightnessctl
+    wev
+    lutris
+    mangohud
+    protonup-qt
+    heroic
+    steam-run
   ];
 }

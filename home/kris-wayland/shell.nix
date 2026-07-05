@@ -12,6 +12,7 @@
       rebuild = "nh os switch ~/nixos-dotfiles";
       clean = "nh clean all";
       rebuild-nom = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos-btw |& nom";
+      ida = "~/ida-pro-9.3/ida-launch.sh";
     };
 
     oh-my-zsh = {
