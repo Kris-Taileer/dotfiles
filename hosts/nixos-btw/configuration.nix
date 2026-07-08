@@ -1,6 +1,11 @@
 { config, lib, pkgs, ... }:
+
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/asus-numberpad-driver.nix
+    ../../modules/couchdb.nix
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -22,6 +27,7 @@
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
+
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
@@ -59,7 +65,7 @@
 
   users.users.kris = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" ];
+    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" "libvirtd" ];
     packages = with pkgs; [ tree ];
     shell = pkgs.zsh;
   };
@@ -84,7 +90,16 @@
     runtimeDir = "/run/user/1000/";
   };
 
+  services.couchdb-sync = {
+    enable = true;
+    adminPassword = ""; //you thought im THAT dumb? ;)
+    useTailscale = false;
+  };
+
+
   virtualisation.docker.enable = true;
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   services.openssh.enable = true;
 
