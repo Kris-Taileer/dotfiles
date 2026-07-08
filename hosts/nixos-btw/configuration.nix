@@ -4,13 +4,13 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/asus-numberpad-driver.nix
-    ../../modules/couchdb.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 3;
-
+  networking.firewall.allowedTCPPorts = [ 5984 ];
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
   networking.hostName = "nixos-btw";
   networking.hosts = {
     "127.0.0.1"      = [ "localhost" ];
@@ -63,6 +63,15 @@
     wireplumber.enable = true;
   };
 
+  services.couchdb = {
+    enable = true;
+    adminUser = "admin";
+    adminPass = "katarsis16";
+
+    bindAddress = "0.0.0.0";
+    port = 5984;
+  };
+
   users.users.kris = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" "libvirtd" ];
@@ -90,17 +99,12 @@
     runtimeDir = "/run/user/1000/";
   };
 
-  services.couchdb-sync = {
-    enable = true;
-    adminPassword = ""; //you thought im THAT dumb? ;)
-    useTailscale = false;
-  };
-
 
   virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
+  services.tailscale.enable = true;
   services.openssh.enable = true;
 
   programs.nix-ld = {
