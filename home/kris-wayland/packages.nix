@@ -1,6 +1,8 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
+    obsidian
+    libreoffice
     docker-compose
     htop
     go
@@ -14,7 +16,12 @@
     nh
     nix-output-monitor
     gcc
+    rustup
+    ruby
+    zig
+    jdk21
     nodejs
+    python3Packages.pwntools
     nixpkgs-fmt
     neovim
     vulkan-tools
@@ -31,6 +38,7 @@
     nmap
     wireshark
     tcpdump
+    putty
     socat
     netcat-gnu
     sqlmap
@@ -46,6 +54,7 @@
     wlr-randr
     burpsuite
     upower
+    gimp
     discord
     ayugram-desktop
     claude-code
