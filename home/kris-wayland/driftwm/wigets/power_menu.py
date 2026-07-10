@@ -99,7 +99,7 @@ def read_input() -> tuple[str, int | None]:
 
 _DEVNULL = subprocess.DEVNULL
 # Delay lets the terminal close first so swaylock gets clean keyboard focus
-_LOCK_CMD = "sleep 0.3 && swaylock -f -c 000000 -k -l"
+_LOCK_CMD = "sleep 0.3 && hyprlock"
 
 
 def _spawn_shell(cmd: str) -> None:

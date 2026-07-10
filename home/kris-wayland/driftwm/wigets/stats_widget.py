@@ -97,9 +97,9 @@ SWAYIDLE_CMD = [
     "-w",
     "timeout", "300", "brightnessctl -s set 10%",
     "resume", "brightnessctl -r",
-    "timeout", "330", "swaylock -f",
+    "timeout", "330", "hyprlock",
     "timeout", "600", "systemctl suspend",
-    "before-sleep", "swaylock -f",
+    "before-sleep", "hyprlock",
 ]
 
 
