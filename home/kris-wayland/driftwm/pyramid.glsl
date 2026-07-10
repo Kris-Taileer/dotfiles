@@ -52,7 +52,8 @@ float sdWirePyramid(vec3 p){
 float map(vec3 p){
     vec3 q = p;
     q.xz = rot2(u_time * 0.6) * q.xz;
-    q.yz = rot2(0.4) * q.yz;
+    float tilt = 0.04 + 0.25 * sin(u_time * 0.25);
+    q.yz = rot2(tilt) * q.yz;
     return sdWirePyramid(q);
 }
 
@@ -68,7 +69,7 @@ vec3 getNormal(vec3 p){
 }
 
 void main(void){
-    vec2 uv = (2.0 * v_coords * size - size) / min(size.x, size.y);
+    vec2 uv = (2.0 * vec2(v_coords.x, 1.0 - v_coords.y) * size - size) / min(size.x, size.y);
 
     vec3 ro = vec3(0.0, 0.6, -4.0);
     vec3 ta = vec3(0.0, 0.0, 0.0);
