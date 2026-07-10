@@ -39,9 +39,9 @@ atexit.register(disable_mouse)
 enable_mouse()
 console.clear()
 try:
-    with Live(render(), console=console, refresh_per_second=2) as live:
+    with Live(render(), console=console, refresh_per_second=4) as live:
         while True:
             live.update(render())
-            poll_click(1.0)
+            poll_click(0.25)
 finally:
     disable_mouse()
