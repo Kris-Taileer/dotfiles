@@ -79,19 +79,7 @@
 
 	home.file.".config/driftwm/config.toml".source = ./driftwm/config.toml;
 	home.file.".config/driftwm/gray.glsl".source = ./driftwm/gray.glsl;
+	home.file.".config/driftwm/foot-widget.ini".source = ./driftwm/foot-widget.ini;
 	home.file.".config/driftwm/pyramid.glsl".source = ./driftwm/pyramid.glsl;
-	home.file.".config/driftwm/widgets/launch.sh" = {
-		source = ./driftwm/widgets/launch.sh;
-		executable = true;
-	};
-	home.file.".config/driftwm/widgets/common.py".source         = ./driftwm/widgets/common.py;
-	home.file.".config/driftwm/widgets/clock_widget.py".source    = ./driftwm/widgets/clock_widget.py;
-	home.file.".config/driftwm/widgets/stats_widget.py".source    = ./driftwm/widgets/stats_widget.py;
-	home.file.".config/driftwm/widgets/calendar_widget.py".source = ./driftwm/widgets/calendar_widget.py;
-	home.file.".config/driftwm/widgets/weather_widget.py".source  = ./driftwm/widgets/weather_widget.py;
-	home.file.".config/driftwm/widgets/canvas_widget.py".source   = ./driftwm/widgets/canvas_widget.py;
-	home.file.".config/driftwm/widgets/notif_widget.py".source    = ./driftwm/widgets/notif_widget.py;
-	home.file.".config/driftwm/widgets/power_widget.py".source    = ./driftwm/widgets/power_widget.py;
-	home.file.".config/driftwm/widgets/power_menu.py".source      = ./driftwm/widgets/power_menu.py;
-	home.file.".config/driftwm/widgets/layout_widget.py".source   = ./driftwm/widgets/layout_widget.py;
+	home.file.".config/driftwm/widgets".source = ./driftwm/widgets;
 }

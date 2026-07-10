@@ -95,5 +95,6 @@
     slurp
     pavucontrol
     awww
+    foot
   ];
 }
