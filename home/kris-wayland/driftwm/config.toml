@@ -1,6 +1,6 @@
 autostart = [
     "eval $(gnome-keyring-daemon --start --components=ssh) && systemctl --user import-environment SSH_AUTH_SOCK && dbus-update-activation-environment SSH_AUTH_SOCK",
-    "swayidle -w timeout 300 'brightnessctl -s set 10%' resume 'brightnessctl -r' timeout 330 'swaylock -f' timeout 600 'systemctl suspend' before-sleep 'swaylock -f'",
+    "swayidle -w timeout 300 'brightnessctl -s set 10%' resume 'brightnessctl -r' timeout 330 'hyprlock' timeout 600 'systemctl suspend' before-sleep 'hyprlock'",
     "dunst",
     "waybar",
     "sleep 1 && ~/.config/driftwm/widgets/launch.sh",
@@ -41,7 +41,7 @@ blur_radius = 3
 [keybindings]
 "mod+return"          = "exec alacritty"
 "mod+d"               = "exec fuzzel"
-"mod+l"               = "spawn swaylock -f"
+"mod+l"               = "exec hyprlock"
 "mod+m"               = "fit-window-snapped"
 "mod+shift+m"         = "fit-window"
 "XF86AudioRaiseVolume"  = "spawn wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
