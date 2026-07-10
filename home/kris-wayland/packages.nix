@@ -1,12 +1,15 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
+    waybar
+    wofi
+    mako
     obsidian
     libreoffice
     docker-compose
     htop
     go
-    python3
+    (python3.withPackages (ps: with ps; [ rich art ]))
     fastfetch
     btop
     tmux
@@ -45,7 +48,9 @@
     volatility3
     hashcat
     john
-    rofi
+    fuzzel
+    swaylock
+    swayidle
     waypaper
     swaybg
     grim
@@ -82,5 +87,13 @@
     protonup-qt
     heroic
     steam-run
+    dunst
+    gnome-keyring
+    dbus
+    brightnessctl
+    grim
+    slurp
+    pavucontrol
+    awww
   ];
 }
