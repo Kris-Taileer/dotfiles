@@ -49,7 +49,7 @@
     hashcat
     john
     fuzzel
-    swaylock
+    hyprlock
     swayidle
     waypaper
     swaybg
