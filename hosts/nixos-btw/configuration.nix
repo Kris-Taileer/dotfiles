@@ -28,23 +28,6 @@
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
 
-  services.xserver = {
-    enable = true;
-    autoRepeatDelay = 200;
-    autoRepeatInterval = 35;
-    windowManager.qtile = {
-      enable = true;
-      extraPackages = python3Packages: with python3Packages; [ qtile-extras ];
-    };
-    windowManager.windowmaker.enable = true;
-    desktopManager.plasma6.enable = true;
-  };
-
-  services.xserver.xkb = {
-    layout = "us,ru";
-    options = "grp:alt_shift_toggle";
-  };
-
   services.displayManager.ly = {
     enable = true;
     settings = {
@@ -62,6 +45,10 @@
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
+  programs.dconf.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.swaylock = {};
 
   services.couchdb = {
     enable = true;
@@ -91,13 +78,13 @@
   };
   programs.gamemode.enable = true;
 
-  services.asus-numberpad-driver = {
-    enable = true;
-    layout = "up5401ea";
-    wayland = true;
-    waylandDisplay = "wayland-0";
-    runtimeDir = "/run/user/1000/";
-  };
+ # services.asus-numberpad-driver = {
+ #  enable = false;
+ #  layout = "up5401ea";
+ #  wayland = true;
+ #  waylandDisplay = "wayland-0";
+ #  runtimeDir = "/run/user/1000/";
+ # };
 
 
   virtualisation.docker.enable = true;
@@ -107,18 +94,22 @@
   services.tailscale.enable = true;
   services.openssh.enable = true;
 
+  services.desktopManager.plasma6.enable = true;
+
+  programs.driftwm.enable = true;
+
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
       libGL
       mesa
-      xorg.libX11
-      xorg.libXext
-      xorg.libXrender
-      xorg.libxcb
-      xorg.xcbutil
-      xorg.xcbutilcursor
-      xorg.libXi
+      libx11
+      libxext
+      libxrender
+      libxcb
+      libxcb-util
+      libxcb-cursor
+      libxi
       stdenv.cc.cc.lib
       libxkbcommon
       fontconfig
