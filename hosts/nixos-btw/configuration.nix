@@ -48,7 +48,7 @@
 
   programs.dconf.enable = true;
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.swaylock = {};
+  security.pam.services.hyprlock = {};
 
   services.couchdb = {
     enable = true;
