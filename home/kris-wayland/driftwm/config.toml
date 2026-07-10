@@ -1,1 +1,112 @@
+autostart = [
+    "eval $(gnome-keyring-daemon --start --components=ssh) && systemctl --user import-environment SSH_AUTH_SOCK && dbus-update-activation-environment SSH_AUTH_SOCK",
+    "swayidle -w timeout 300 'brightnessctl -s set 10%' resume 'brightnessctl -r' timeout 330 'swaylock -f' timeout 600 'systemctl suspend' before-sleep 'swaylock -f'",
+    "dunst",
+    "waybar",
+    "sleep 1 && ~/.config/driftwm/widgets/launch.sh",
+]
 
+focus_follows_mouse = true
+window_placement = "auto"
+
+[snap]
+corners = true
+centers = true
+
+[input.keyboard]
+layout = "us,ru"
+options = "grp:alt_shift_toggle"
+
+[zoom]
+reset_on_new_window = false
+
+[cursor]
+theme = "catppuccin-mocha-mauve-cursors"
+
+[decorations]
+bg_color = "#1e1e2e"
+fg_color = "#cdd6f4"
+
+[background]
+type = "shader"
+path = "/home/kris/.config/driftwm/pyramid.glsl"
+
+[mouse]
+decoration_resize_snapped = true
+decoration_fit_snapped = true
+
+[effects]
+blur_radius = 3
+
+[keybindings]
+"mod+return"          = "exec alacritty"
+"mod+d"               = "exec fuzzel"
+"mod+l"               = "spawn swaylock -f"
+"mod+m"               = "fit-window-snapped"
+"mod+shift+m"         = "fit-window"
+"XF86AudioRaiseVolume"  = "spawn wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+"XF86AudioLowerVolume"  = "spawn wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+"XF86AudioMute"         = "spawn wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+"XF86MonBrightnessUp"   = "spawn brightnessctl set 5%+"
+"XF86MonBrightnessDown" = "spawn brightnessctl set 5%-"
+
+[gestures.on-window]
+"alt+3-finger-swipe"       = "resize-window-snapped"
+"alt+shift+3-finger-swipe" = "resize-window"
+
+[[window_rules]]
+app_id = "org.kde.konsole"
+opacity = 0.9
+blur = true
+
+[[window_rules]]
+app_id = "drift-*"
+widget = true
+decoration = "minimal"
+
+[[window_rules]]
+app_id = "drift-clock"
+position = [-79, 195]
+size = [311, 136]
+
+[[window_rules]]
+app_id = "drift-stats"
+position = [-79, -1]
+size = [311, 236]
+
+[[window_rules]]
+app_id = "drift-canvas"
+position = [-114, -177]
+size = [241, 96]
+
+[[window_rules]]
+app_id = "drift-layout"
+position = [51, -177]
+size = [70, 96]
+
+[[window_rules]]
+app_id = "drift-calendar"
+position = [190, -1]
+size = [207, 236]
+
+[[window_rules]]
+app_id = "drift-weather"
+position = [190, 195]
+size = [207, 136]
+
+[[window_rules]]
+app_id = "drift-notif"
+position = [195, -177]
+size = [202, 96]
+
+[[window_rules]]
+app_id = "drift-power"
+position = [276, -247]
+size = [35, 25]
+
+[[outputs]]
+name = "eDP-1"
+scale = 1.5
+mode = "preferred"
+position = "auto"
+transform = "normal"
