@@ -50,10 +50,13 @@ try:
             live.update(render())
             click = poll_click(1.0)
             if click is not None:
-                subprocess.Popen(
-                    ["gnome-clocks"],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
+                try:
+                    subprocess.Popen(
+                        ["gnome-clocks"],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                except FileNotFoundError:
+                    pass
 finally:
     disable_mouse()

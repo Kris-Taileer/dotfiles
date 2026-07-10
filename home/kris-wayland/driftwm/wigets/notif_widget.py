@@ -39,10 +39,10 @@ atexit.register(disable_mouse)
 enable_mouse()
 console.clear()
 try:
-    with Live(render(), console=console, refresh_per_second=1) as live:
+    with Live(render(), console=console, refresh_per_second=2) as live:
         while True:
             live.update(render())
-            if poll_click(1.0) is not None:
+            if poll_click(0.5) is not None:
                 with contextlib.suppress(OSError):
                     subprocess.Popen(
                         ["swaync-client", "-t"],

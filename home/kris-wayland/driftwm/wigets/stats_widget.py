@@ -41,7 +41,7 @@ cpu_history: deque[float] = deque(maxlen=10)
 ram_history: deque[float] = deque(maxlen=10)
 
 # Slow-poll cache for subprocess-dependent data (volume, SSID, bluetooth, tuned profile)
-SLOW_POLL_INTERVAL = 10  # seconds
+SLOW_POLL_INTERVAL = 2  # seconds
 _slow_state: dict = {"cache": {}, "counter": 0}
 
 
@@ -64,11 +64,11 @@ def _get_slow_data() -> dict:
 click_map: dict[int, list[str] | str | tuple] = {}
 
 # Click actions per section
-ACTION_CPU = ["gnome-system-monitor"]
-ACTION_RAM = ["gnome-system-monitor"]
-ACTION_VOL = ["cosmic-settings", "sound"]
-ACTION_WIFI = ["cosmic-settings", "wireless"]
-ACTION_BT = ["cosmic-settings", "bluetooth"]
+ACTION_CPU = ["alacritty", "-e", "btop"]
+ACTION_RAM = ["alacritty", "-e", "btop"]
+ACTION_VOL = ["pavucontrol"]
+ACTION_WIFI = ["alacritty", "-e", "nmtui"]
+ACTION_BT = ["alacritty", "-e", "bluetoothctl"]
 
 # Bar geometry: 3 spaces + icon(2) + 2 spaces + PAD(15) = column 22, width 10
 BAR_X_START = 22
@@ -83,12 +83,8 @@ def _bar_pct_from_x(x: int) -> int | None:
 
 
 def _set_volume(pct: int) -> None:
-    current, _ = get_volume()
-    delta = pct - current
-    if delta == 0:
-        return
     subprocess.Popen(
-        ["swayosd-client", "--output-volume", f"{delta:+d}"],
+        ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", f"{pct}%"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
@@ -96,25 +92,14 @@ def _set_volume(pct: int) -> None:
 
 # ── Caffeine (swayidle toggle) ─────────────────────────────
 
-_LOCK_SH = str(
-    Path("~/Documents/work/scripts/driftwm/extras/scripts/lock.sh").expanduser(),
-)
 SWAYIDLE_CMD = [
     "swayidle",
     "-w",
-    "timeout",
-    "300",
-    "brightnessctl -s set 10%",
-    "resume",
-    "brightnessctl -r",
-    "timeout",
-    "330",
-    _LOCK_SH,
-    "timeout",
-    "600",
-    "systemctl suspend",
-    "before-sleep",
-    _LOCK_SH,
+    "timeout", "300", "brightnessctl -s set 10%",
+    "resume", "brightnessctl -r",
+    "timeout", "330", "swaylock -f",
+    "timeout", "600", "systemctl suspend",
+    "before-sleep", "swaylock -f",
 ]
 
 
@@ -156,7 +141,7 @@ def _toggle_caffeine() -> None:
 
 def _set_brightness(pct: int) -> None:
     subprocess.Popen(
-        ["swayosd-client", "--brightness", str(pct)],
+        ["brightnessctl", "set", f"{pct}%"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
@@ -323,10 +308,10 @@ atexit.register(disable_mouse)
 enable_mouse()
 console.clear()
 try:
-    with Live(render(), console=console, refresh_per_second=1) as live:
+    with Live(render(), console=console, refresh_per_second=4) as live:
         while True:
             live.update(render())
-            click = poll_click(1.0)
+            click = poll_click(0.25)
             if click is not None:
                 x, y = click
                 action = click_map.get(y)
@@ -349,7 +334,7 @@ try:
                         _toggle_caffeine()
                     elif kind == "vol_bar" and x <= 7:
                         subprocess.Popen(
-                            ["swayosd-client", "--output-volume", "mute-toggle"],
+                            ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"],
                             stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL,
                         )
