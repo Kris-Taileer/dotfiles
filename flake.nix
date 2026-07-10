@@ -1,19 +1,21 @@
 {
 	description = "NixOS from Hell";
 	inputs = {
-		nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 		home-manager = {
-			url = "github:nix-community/home-manager/release-26.05";
+			url = "github:nix-community/home-manager/master";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+		driftwm.url = "github:malbiruk/driftwm";
 	};
 
-	outputs = { self, nixpkgs, home-manager, ... }: {
+	outputs = { self, nixpkgs, home-manager, driftwm, ... }: {
 		nixosConfigurations.nixos-btw = nixpkgs.lib.nixosSystem {
 			system = "x86_64-linux";
 			modules = [
 				./hosts/nixos-btw/configuration.nix
 				./modules/asus-numberpad-driver.nix
+				driftwm.nixosModules.default
 				home-manager.nixosModules.home-manager
 				{
 					home-manager = {
