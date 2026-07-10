@@ -10,6 +10,7 @@
 		./desktop-tools.nix
 		./dev.nix
 		./terminal.nix
+		./waybar.nix
 	];
 	home.username = "kris";
 	home.homeDirectory = "/home/kris";

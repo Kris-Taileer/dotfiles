@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 {
   home.pointerCursor = {
+    enable  = true;
     package = pkgs.catppuccin-cursors.mochaMauve;
     name    = "catppuccin-mocha-mauve-cursors";
     gtk.enable = true;
@@ -76,21 +77,21 @@
     Timeout=5
   '';
 
-	home.file.".config/qtile".source = ./qtile;
-	home.file."wallpaper.png".source = ./wallpapers/wallpaper.png;
-	home.file.".config/waypaper/config.ini".text = ''
-		[Settings]
-		folder = ~/
-		wallpaper = ~/wallpaper.png
-		backend = swaybg
-		monitors = All
-		fill = fill
-		sort = name
-		color = #ffffff
-		subfolders = False
-		show_hidden = False
-		show_keywords = False
-		randomize = False
-		number_of_columns = 4
-	'';
+	home.file.".config/driftwm/config.toml".source = ./driftwm/config.toml;
+	home.file.".config/driftwm/gray.glsl".source = ./driftwm/gray.glsl;
+	home.file.".config/driftwm/pyramid.glsl".source = ./driftwm/pyramid.glsl;
+	home.file.".config/driftwm/widgets/launch.sh" = {
+		source = ./driftwm/widgets/launch.sh;
+		executable = true;
+	};
+	home.file.".config/driftwm/widgets/common.py".source         = ./driftwm/widgets/common.py;
+	home.file.".config/driftwm/widgets/clock_widget.py".source    = ./driftwm/widgets/clock_widget.py;
+	home.file.".config/driftwm/widgets/stats_widget.py".source    = ./driftwm/widgets/stats_widget.py;
+	home.file.".config/driftwm/widgets/calendar_widget.py".source = ./driftwm/widgets/calendar_widget.py;
+	home.file.".config/driftwm/widgets/weather_widget.py".source  = ./driftwm/widgets/weather_widget.py;
+	home.file.".config/driftwm/widgets/canvas_widget.py".source   = ./driftwm/widgets/canvas_widget.py;
+	home.file.".config/driftwm/widgets/notif_widget.py".source    = ./driftwm/widgets/notif_widget.py;
+	home.file.".config/driftwm/widgets/power_widget.py".source    = ./driftwm/widgets/power_widget.py;
+	home.file.".config/driftwm/widgets/power_menu.py".source      = ./driftwm/widgets/power_menu.py;
+	home.file.".config/driftwm/widgets/layout_widget.py".source   = ./driftwm/widgets/layout_widget.py;
 }
