@@ -1,5 +1,66 @@
 { config, pkgs, ... }:
+let
+  colors = import ./theme.nix;
+in
 {
+  programs.hyprlock = {
+    enable = true;
+    extraConfig = ''
+      general {
+        disable_loading_bar = true
+        hide_cursor = true
+        grace = 0
+      }
+
+      background {
+        monitor =
+        color = rgba(${colors.base}ff)
+      }
+
+      label {
+        monitor =
+        text = cmd[update:1000] echo "$(date +'%-H:%M')"
+        color = rgba(${colors.text}ff)
+        font_size = 80
+        font_family = JetBrainsMono Nerd Font Bold
+        position = 0, 160
+        halign = center
+        valign = center
+      }
+
+      label {
+        monitor =
+        text = cmd[update:60000] date +'%A, %-d %B'
+        color = rgba(${colors.overlay0}ff)
+        font_size = 11
+        font_family = JetBrainsMono Nerd Font
+        position = 0, 90
+        halign = center
+        valign = center
+      }
+
+      input-field {
+        monitor =
+        size = 250, 50
+        outline_thickness = 3
+        dots_size = 0.33
+        dots_spacing = 0.15
+        dots_center = true
+        outer_color = rgb(${colors.overlay0})
+        inner_color = rgb(${colors.surface0})
+        font_color = rgb(${colors.text})
+        check_color = rgb(${colors.sapphire})
+        fail_color = rgb(${colors.red})
+        capslock_color = rgb(${colors.yellow})
+        fade_on_empty = true
+        placeholder_text =
+        fail_text = $FAIL ($ATTEMPTS)
+        position = 0, -60
+        halign = center
+        valign = center
+      }
+    '';
+  };
   home.pointerCursor = {
     enable  = true;
     package = pkgs.catppuccin-cursors.mochaMauve;

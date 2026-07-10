@@ -83,7 +83,7 @@ in
 
         "custom/lock" = {
           format = "";
-          on-click = "swaylock -f";
+          on-click = "hyprlock";
           tooltip-format = "Lock screen";
         };
 
