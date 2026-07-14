@@ -96,5 +96,6 @@
     pavucontrol
     awww
     foot
+    feh
   ];
 }
