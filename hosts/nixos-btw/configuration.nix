@@ -28,15 +28,20 @@
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
 
+  environment.etc."ly/black_hole.dur".source = ./black_hole.dur;
+
   services.displayManager.ly = {
     enable = true;
     settings = {
-      animation = "doom";
+      animation = "dur_file";
+      dur_file_path = "/etc/ly/black_hole.dur";
       blank_password = true;
       term_reset_cmd = "tput reset";
-      fg = 7;
-      bg = 0;
-      clock = "%H:%M:%S";
+      fg = "0x00FFFFFF"; # white
+      bg = "0x00000000"; # black
+      bigclock = "en";
+      bigclock_12hr = false;
+      bigclock_seconds = true;
     };
   };
 
@@ -109,6 +114,11 @@
       libxcb
       libxcb-util
       libxcb-cursor
+      xorg.xcbutilwm
+      xorg.xcbutilimage
+      xorg.xcbutilkeysyms
+      xorg.xcbutilrenderutil
+      wayland
       libxi
       stdenv.cc.cc.lib
       libxkbcommon
