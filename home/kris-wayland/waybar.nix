@@ -44,6 +44,7 @@ in
 
         temperature = {
           critical-threshold = 80;
+          hwmon-path = "/sys/class/hwmon/hwmon6/temp1_input";
           format = "{icon} {temperatureC}°C";
           format-icons = [ "" "" "" ];
         };

@@ -142,5 +142,8 @@ in
 	home.file.".config/driftwm/gray.glsl".source = ./driftwm/gray.glsl;
 	home.file.".config/driftwm/foot-widget.ini".source = ./driftwm/foot-widget.ini;
 	home.file.".config/driftwm/pyramid.glsl".source = ./driftwm/pyramid.glsl;
+	home.file.".config/driftwm/event_horizon.glsl".source = ./driftwm/event_horizon.glsl;
+	home.file.".config/driftwm/aurora_curtain.glsl".source = ./driftwm/aurora_curtain.glsl;
+	home.file.".config/driftwm/radiant_geometry.glsl".source = ./driftwm/radiant_geometry.glsl;
 	home.file.".config/driftwm/widgets".source = ./driftwm/widgets;
 }
