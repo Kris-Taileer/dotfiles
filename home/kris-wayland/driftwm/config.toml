@@ -29,7 +29,7 @@ fg_color = "#cdd6f4"
 
 [background]
 type = "shader"
-path = "/home/kris/.config/driftwm/pyramid.glsl"
+path = "/home/kris/.config/driftwm/event_horizon.glsl"
 
 [mouse]
 decoration_resize_snapped = true
@@ -107,6 +107,13 @@ size = [35, 25]
 [[outputs]]
 name = "eDP-1"
 scale = 1.5
+mode = "preferred"
+position = "auto"
+transform = "normal"
+
+[[outputs]]
+name = "HDMI-A-1"
+scale = 1.0
 mode = "preferred"
 position = "auto"
 transform = "normal"
