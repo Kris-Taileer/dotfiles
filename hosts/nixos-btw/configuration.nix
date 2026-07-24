@@ -4,11 +4,37 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/asus-numberpad-driver.nix
+    ../../modules/minecraft-server.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 3;
+
+  boot.tmp.useTmpfs = true;
+  boot.tmp.tmpfsSize = "25%";
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+    "vm.dirty_ratio" = 10;
+    "vm.dirty_background_ratio" = 5;
+    "vm.dirty_expire_centisecs" = 1500;
+    "vm.dirty_writeback_centisecs" = 500;
+    "net.core.somaxconn" = 4096;
+  };
+
+  services.journald.extraConfig = ''
+    SystemMaxUse=100M
+    MaxRetentionSec=1week
+  '';
+
+  nix.settings.max-jobs = "auto";
+  nix.settings.auto-optimise-store = true;
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 3d";
+  };
   networking.firewall.allowedTCPPorts = [ 5984 ];
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
   networking.hostName = "nixos-btw";
@@ -81,6 +107,22 @@
     extraCompatPackages = with pkgs; [ proton-ge-bin ];
   };
   programs.gamemode.enable = true;
+
+  services.marcraft = {
+    enable = true;
+    dataDir = "/srv/minecraft";
+    openFirewall = true;
+    port = 25565;
+
+    javaPackage = pkgs.jdk25;
+    jvmFlags = [
+      "-Xms4G"
+      "-Xmx8G"
+      "-XX:+UseZGC"
+      "-XX:+UseCompactObjectHeaders"
+      "-XX:+UseStringDeduplication"
+    ];
+  };
 
   services.asus-numberpad-driver = {
     enable = true;
