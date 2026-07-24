@@ -72,7 +72,6 @@
   };
 
   programs.zsh.enable = true;
-  programs.firefox.enable = true;
   programs.wireshark.enable = true;
   programs.amnezia-vpn.enable = true;
 
@@ -83,13 +82,13 @@
   };
   programs.gamemode.enable = true;
 
- # services.asus-numberpad-driver = {
- #  enable = false;
- #  layout = "up5401ea";
- #  wayland = true;
- #  waylandDisplay = "wayland-0";
- #  runtimeDir = "/run/user/1000/";
- # };
+  services.asus-numberpad-driver = {
+    enable = true;
+    layout = "up5401ea";
+    wayland = true;
+    waylandDisplay = "wayland-1";
+    runtimeDir = "/run/user/1000/";
+  };
 
 
   virtualisation.docker.enable = true;
