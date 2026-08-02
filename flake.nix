@@ -20,6 +20,7 @@
 				./hosts/nixos-btw/configuration.nix
 				./modules/asus-numberpad-driver.nix
 				./modules/minecraft-server.nix
+				./modules/bluetooth.nix
 				driftwm.nixosModules.default
 				home-manager.nixosModules.home-manager
 				{
