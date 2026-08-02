@@ -79,6 +79,8 @@
     kdePackages.kcalc
     qbittorrent
     imv
+    volatility2-bin
+    edb
     mpv
     zathura
     brightnessctl
@@ -100,5 +102,6 @@
     feh
     prismlauncher
     mc
+    p7zip
   ];
 }

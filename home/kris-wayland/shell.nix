@@ -13,6 +13,7 @@
       clean = "nh clean all";
       rebuild-nom = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos-btw |& nom";
       ida = "~/ida-pro-9.3/ida-launch.sh";
+      driftwm-reload = "driftwm msg action reload-config";
     };
 
     oh-my-zsh = {
