@@ -68,7 +68,7 @@ ACTION_CPU = ["alacritty", "-e", "btop"]
 ACTION_RAM = ["alacritty", "-e", "btop"]
 ACTION_VOL = ["pavucontrol"]
 ACTION_WIFI = ["alacritty", "-e", "nmtui"]
-ACTION_BT = ["alacritty", "-e", "bluetoothctl"]
+ACTION_BT = ["alacritty", "-e", "bluetuith"]
 
 # Bar geometry: 3 spaces + icon(2) + 2 spaces + PAD(15) = column 22, width 10
 BAR_X_START = 22
