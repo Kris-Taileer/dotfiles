@@ -5,6 +5,7 @@
 	imports = [
 		./shell.nix
 		./git.nix
+		./ssh.nix
 		./packages.nix
 		./desktop.nix
 		./desktop-tools.nix
