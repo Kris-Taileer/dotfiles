@@ -17,6 +17,9 @@
     cava
     cbonsai
     pipes-rs
+    cmatrix
+    unimatrix
+    glslviewer
     nh
     nix-output-monitor
     gcc
@@ -42,7 +45,6 @@
     nmap
     wireshark
     tcpdump
-    putty
     socat
     netcat-gnu
     sqlmap
@@ -51,6 +53,9 @@
     john
     fuzzel
     hyprlock
+    lmstudio
+    makedepend
+    makeself
     swayidle
     waypaper
     swaybg
@@ -81,6 +86,29 @@
     imv
     volatility2-bin
     edb
+
+    jadx
+    dart
+    openconnect
+    wine
+    nasm
+    lolcat
+    linux_logo
+    tetris
+    adbtuifm
+    nbsdgames
+    cowsay
+    fortune
+    picocom
+    usbutils
+    rkdeveloptool
+    tcpreplay
+    openssl
+    screen
+    cbonsai
+    stegsolve
+    steghide
+    android-tools
     mpv
     zathura
     brightnessctl
@@ -103,5 +131,29 @@
     prismlauncher
     mc
     p7zip
+
+    ansible
+    rsync
+    pssh
+    ngrep
+    mtr
+    iftop
+    bmon
+    mitmproxy
+    nftables
+    ripgrep
+    fd
+    jq
+    yq-go
+    lsof
+    rlwrap
+    entr
+    watchexec
+    ncdu
+    lazydocker
+    ctop
+    multitail
+    lnav
+    goaccess
   ];
 }

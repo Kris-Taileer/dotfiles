@@ -14,6 +14,7 @@ in
 
       background {
         monitor =
+        path = screenshot
         color = rgba(${colors.base}ff)
       }
 
@@ -146,4 +147,5 @@ in
 	home.file.".config/driftwm/aurora_curtain.glsl".source = ./driftwm/aurora_curtain.glsl;
 	home.file.".config/driftwm/radiant_geometry.glsl".source = ./driftwm/radiant_geometry.glsl;
 	home.file.".config/driftwm/widgets".source = ./driftwm/widgets;
+	home.file.".config/driftwm/screensaver".source = ./driftwm/screensaver;
 }
