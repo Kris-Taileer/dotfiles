@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ../../modules/asus-numberpad-driver.nix
     ../../modules/minecraft-server.nix
+    ../../modules/bluetooth.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -92,7 +93,7 @@
 
   users.users.kris = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" "libvirtd" ];
+    extraGroups = [ "wheel" "networkmanager" "pipewire" "wireshark" "docker" "video" "libvirtd" "vboxusers" ];
     packages = with pkgs; [ tree ];
     shell = pkgs.zsh;
   };
@@ -124,6 +125,11 @@
     ];
   };
 
+  services.bluetooth-setup = {
+    enable = true;
+    user = "kris";
+  };
+
   services.asus-numberpad-driver = {
     enable = true;
     layout = "up5401ea";
@@ -136,10 +142,27 @@
   virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+  virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enableExtensionPack = true;
 
   services.tailscale.enable = true;
   services.openssh.enable = true;
 
+  # Dedicated tunnel to the VPS (77.91.87.139) so the Minecraft server (behind CGNAT
+  # here) is reachable through the VPS's public IP, independent of Amnezia's own
+  # WireGuard/AmneziaWG stack running there.
+  networking.wg-quick.interfaces.wg-mc = {
+    address = [ "10.23.42.2/30" ];
+    privateKeyFile = "/etc/wg-mc-private.key";
+    peers = [{
+      publicKey = "oip22r8rzfM4kEEgP2dnvKSiQsX82kYsXXtmk0X13gE=";
+      endpoint = "77.91.87.139:51888";
+      allowedIPs = [ "10.23.42.1/32" ];
+      persistentKeepalive = 25;
+    }];
+  };
+
+  security.pki.certificateFiles = [ ./certs/letoctf-root-ca.pem ];
   services.desktopManager.plasma6.enable = true;
 
   programs.driftwm.enable = true;
