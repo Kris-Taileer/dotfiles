@@ -49,6 +49,29 @@ let
     esac
   '';
 
+  # Battery: drop the panel to 60Hz on battery, back to 120Hz on AC. Event-driven
+  # (udev power_supply events) rather than polling, and idempotent (only calls
+  # hyprctl when the AC state actually flips). Runs inside the session as an
+  # exec-once, so hyprctl auto-resolves the instance.
+  refreshSync = pkgs.writeShellScriptBin "refresh-sync" ''
+    AC=/sys/class/power_supply/AC0/online
+    hyprctl="${pkgs.hyprland}/bin/hyprctl"
+    last=""
+    apply() {
+      on="$(cat "$AC" 2>/dev/null)"
+      [ "$on" = "$last" ] && return
+      last="$on"
+      if [ "$on" = "1" ]; then
+        "$hyprctl" keyword monitor "eDP-1,2880x1800@120,auto,1.333333"
+      else
+        "$hyprctl" keyword monitor "eDP-1,2880x1800@60,auto,1.333333"
+      fi
+    }
+    apply
+    ${pkgs.systemd}/bin/udevadm monitor --udev --subsystem-match=power_supply \
+      | while read -r _; do apply; done
+  '';
+
   # Apple-style Liquid Glass (refraction/specular/fresnel/chromatic-aberration).
   # Pinned to the hyprglass commit that hyprpm maps to Hyprland 0.55.4 — built
   # from source via mkHyprlandPlugin so it links to our Nix-store libs (prebuilt
@@ -119,9 +142,10 @@ in
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "awww-daemon"
         "sleep 1 && awww img ~/.config/hypr/wallpaper.png"
-        "waybar -c ~/.config/waybar-mac/config.jsonc -s ~/.config/waybar-mac/style.css"
+        "qs"   # Quickshell macOS shell: menu bar + Dynamic Island notch + dock + control center
         "wl-paste --watch cliphist store"   # record clipboard history (SUPER+V picker)
         "waycorner"                         # macOS hot corners
+        "refresh-sync"                      # 120Hz on AC / 60Hz on battery (battery saver)
         # idle/lock is handled by hypridle (services.hypridle in desktop.nix)
       ];
 
@@ -280,10 +304,13 @@ in
       # Real glass under the bar / launcher / dock. 0.55 syntax:
       #   `<effect> <value>, match:<prop> <regex>`  (ignorezero -> ignore_alpha)
       layerrule = [
-        "blur 1, match:namespace ^(top)$"
-        "ignore_alpha 0.5, match:namespace ^(top)$"
-        "blur 1, match:namespace ^(dock)$"
-        "ignore_alpha 0.5, match:namespace ^(dock)$"
+        # Quickshell shell surfaces — frosted glass via native blur.
+        "blur 1, match:namespace ^(qs-bar)$"
+        "ignore_alpha 0.5, match:namespace ^(qs-bar)$"
+        "blur 1, match:namespace ^(qs-dock)$"
+        "ignore_alpha 0.4, match:namespace ^(qs-dock)$"
+        "blur 1, match:namespace ^(qs-control-center)$"
+        "ignore_alpha 0.4, match:namespace ^(qs-control-center)$"
         "blur 1, match:namespace ^(wofi)$"
         "ignore_alpha 0.5, match:namespace ^(wofi)$"
         "blur 1, match:namespace ^(swaync-control-center)$"
@@ -341,9 +368,7 @@ in
         "$mod, W, killactive"                                    # Cmd+W  close window
         "$mod ALT, Q, forcekillactive"                           # Cmd+Opt+Esc  force quit
         "CTRL $mod, Q, exec, hyprlock"                           # Ctrl+Cmd+Q  lock
-        "CTRL, left, workspace, e-1"                             # Ctrl+Left   previous Space
-        "CTRL, right, workspace, e+1"                            # Ctrl+Right  next Space
-        "CTRL, up, exec, hyprctl dispatch overview:toggle"      # Ctrl+Up     Mission Control
+        # (Ctrl+arrows intentionally left UNBOUND so apps get word-jump / native use)
         "ALT, Tab, cyclenext"                                    # Cmd+Tab     window switcher
         "ALT, Tab, bringactivetotop"
         "$mod, comma, movetoworkspacesilent, special:minimized" # Cmd+H       hide window
@@ -392,11 +417,13 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
       ];
 
-      # Media keys go through avizo's volumectl/lightctl so the OSD popup shows.
+      # Volume keys use wpctl directly — the Dynamic Island notch is the volume
+      # OSD (it reacts to any Pipewire change). Brightness keeps avizo's OSD via
+      # lightctl (the notch doesn't surface brightness).
       bindel = [
-        ",XF86AudioRaiseVolume, exec, volumectl -u up"
-        ",XF86AudioLowerVolume, exec, volumectl -u down"
-        ",XF86AudioMute, exec, volumectl toggle-mute"
+        ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
+        ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ",XF86MonBrightnessUp, exec, lightctl up"
         ",XF86MonBrightnessDown, exec, lightctl down"
       ];
@@ -446,6 +473,8 @@ in
     # awww (swww fork) is already in packages.nix; it drives the wallpaper.
     # (apple-cursor is installed via home.pointerCursor in desktop.nix)
     hyprshot             # Hyprland-native screenshots (defined above)
+    refreshSync          # 120/60Hz auto-switch on AC/battery (defined above)
+    quickshell           # QtQuick Wayland shell (bar/notch/dock/control-center)
     hyprpicker
     playerctl
     bemoji               # emoji picker (SUPER+.)
@@ -459,6 +488,9 @@ in
 
   home.file = {
     ".config/hypr/wallpaper.png".source = ./wallpapers/wallpaper.png;
+
+    # ---- Quickshell macOS unified shell (QML) ----
+    ".config/quickshell".source = ./quickshell;
 
     # ---- waycorner: macOS hot corners ----
     ".config/waycorner/config.toml".text = ''
