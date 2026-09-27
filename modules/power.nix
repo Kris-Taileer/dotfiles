@@ -60,7 +60,7 @@
       # --- Battery longevity -------------------------------------------------
       # Stop charging at 90%. ASUS firmware only supports the stop threshold
       # (there is no start threshold), so we set that alone.
-      STOP_CHARGE_THRESH_BAT0 = 90;
+      STOP_CHARGE_THRESH_BAT0 = 100;
     };
   };
 
