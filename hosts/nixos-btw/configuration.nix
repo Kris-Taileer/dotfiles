@@ -6,7 +6,11 @@
     ../../modules/asus-numberpad-driver.nix
     ../../modules/minecraft-server.nix
     ../../modules/bluetooth.nix
+    ../../modules/happ-module.nix
+    ../../modules/power.nix
   ];
+  services.happ.enable = true;
+
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -54,6 +58,10 @@
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
+
+  # Prevent Tiger Lake thermal throttling, which shows up in osu!lazer as
+  # periodic micro-stutter. Pairs with gamemode's performance governor.
+  services.thermald.enable = true;
 
   environment.etc."ly/black_hole.dur".source = ./black_hole.dur;
 
@@ -163,9 +171,20 @@
   };
 
   security.pki.certificateFiles = [ ./certs/letoctf-root-ca.pem ];
-  services.desktopManager.plasma6.enable = true;
 
   programs.driftwm.enable = true;
+
+  # macOS-like Wayland compositor. Kept alongside driftwm (both are selectable
+  # in ly); Plasma 6 was removed in favour of this lighter setup.
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  };
 
   programs.nix-ld = {
     enable = true;
@@ -197,6 +216,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    pkgs.fetch
     vim
     wget
     git
@@ -206,18 +226,55 @@
   ];
 
   fonts.packages = with pkgs; [
+    monocraft    # system-wide font (Minecraft-style monospace)
     nerd-fonts.jetbrains-mono
+    inter
+    nerd-fonts.symbols-only
   ];
+
+  # Monocraft everywhere. Nerd Font kept as fallback so icon glyphs (bar,
+  # symbols) that Monocraft lacks still render.
+  fonts.fontconfig.defaultFonts = {
+    monospace = [ "Monocraft" "JetBrainsMono Nerd Font" ];
+    sansSerif = [ "Monocraft" "JetBrainsMono Nerd Font" ];
+    serif     = [ "Monocraft" "JetBrainsMono Nerd Font" ];
+  };
 
   environment.sessionVariables = {
     QT_QPA_PLATFORM              = "wayland";
     NIXOS_OZONE_WL               = "1";
     MOZ_ENABLE_WAYLAND           = "1";
     _JAVA_AWT_WM_NONREPARENTING  = "1";
-    XCURSOR_THEME                = "catppuccin-mocha-mauve-cursors";
+    XCURSOR_THEME                = "macOS";
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  # xwayland-satellite 0.8.1 (the version in our pinned nixpkgs) panics with
+  # "Invalid size for positioner's anchor rectangle" on Ghidra's zero-size splash
+  # xdg_positioner and takes the whole X server down with it — so Ghidra's GUI
+  # dies during startup under driftwm. 0.8.2 turns SPLASH windows into fixed-size
+  # toplevels (no positioner), which removes the crash and makes Ghidra start
+  # reliably. Drop this override once our nixpkgs ships xwayland-satellite >= 0.8.2.
+  nixpkgs.overlays = [
+    (final: prev: {
+      xwayland-satellite = prev.xwayland-satellite.overrideAttrs (old: rec {
+        version = "0.8.2";
+        src = prev.fetchFromGitHub {
+          owner = "Supreeeme";
+          repo = "xwayland-satellite";
+          tag = "v${version}";
+          hash = "sha256-Mb7jpqnrcYCfNSItIkkHpuR3YxWFxPuIBfcwNKlRBkk=";
+        };
+        cargoDeps = prev.rustPlatform.fetchCargoVendor {
+          inherit src;
+          name = "xwayland-satellite-${version}-vendor";
+          hash = "sha256-Saa3SRsQuY6u6pfBGezaEExOt/ReblnrG7pAXjA6Dk8=";
+        };
+      });
+    })
+  ];
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "26.05";
