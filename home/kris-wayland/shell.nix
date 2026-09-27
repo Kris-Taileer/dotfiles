@@ -15,6 +15,7 @@
       ida = "~/ida-pro-9.3/ida-launch.sh";
       driftwm-reload = "driftwm msg action reload-config";
       ytsage = "~/venv/bin/ytsage-launch";
+      clear-notifs = "dunstctl close-all && dunstctl history-clear";
     };
 
     oh-my-zsh = {

@@ -23,7 +23,7 @@ in
         text = cmd[update:1000] echo "$(date +'%-H:%M')"
         color = rgba(${colors.text}ff)
         font_size = 80
-        font_family = JetBrainsMono Nerd Font Bold
+        font_family = Monocraft
         position = 0, 160
         halign = center
         valign = center
@@ -34,7 +34,7 @@ in
         text = cmd[update:60000] date +'%A, %-d %B'
         color = rgba(${colors.overlay0}ff)
         font_size = 11
-        font_family = JetBrainsMono Nerd Font
+        font_family = Monocraft
         position = 0, 90
         halign = center
         valign = center
@@ -64,8 +64,9 @@ in
   };
   home.pointerCursor = {
     enable  = true;
-    package = pkgs.catppuccin-cursors.mochaMauve;
-    name    = "catppuccin-mocha-mauve-cursors";
+    package = pkgs.apple-cursor;   # ful1e5/apple_cursor
+    name    = "macOS";
+    size    = 24;
     gtk.enable = true;
     x11.enable = true;
   };
@@ -82,7 +83,7 @@ in
   xdg.dataFile."applications/nvim-term.desktop".text = ''
     [Desktop Entry]
     Name=Neovim
-    Exec=alacritty -e nvim %F
+    Exec=ghostty -e nvim %F
     Terminal=false
     Type=Application
     MimeType=text/plain;text/x-python;text/x-csrc;text/x-chdr;text/javascript;application/json;text/x-shellscript;text/x-lua;text/x-rust;text/markdown;text/css;text/x-makefile;

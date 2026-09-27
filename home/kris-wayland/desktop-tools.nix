@@ -42,34 +42,41 @@ in
   services.dunst = {
     enable = true;
     settings = {
+      # Sonoma-dark glass: translucent graphite (the ~e6 alpha lets the
+      # Hyprland `notifications` blur rule frost it), subtle white hairline.
       global = {
-        width = 320;
-        height = 80;
+        width = 360;
+        height = 110;
         origin = "top-right";
-        offset = "12x12";
-        frame_width = 2;
-        frame_color = "#${colors.mauve}";
-        font = "JetBrainsMono Nerd Font 10";
-        corner_radius = 10;
-        background = "#${colors.base}";
-        foreground = "#${colors.text}";
+        offset = "14x14";
+        frame_width = 1;
+        frame_color = "#ffffff26";
+        separator_color = "frame";
+        font = "Monocraft 10";
+        corner_radius = 16;
+        background = "#1e1e1ee6";
+        foreground = "#ededed";
+        padding = 14;
+        horizontal_padding = 16;
+        text_icon_padding = 10;
+        gap_size = 8;
       };
       urgency_low = {
-        background = "#${colors.base}";
-        foreground = "#${colors.subtext1}";
-        frame_color = "#${colors.surface1}";
+        background = "#1e1e1ecc";
+        foreground = "#a0a0a5";
+        frame_color = "#ffffff1a";
         timeout = 5;
       };
       urgency_normal = {
-        background = "#${colors.base}";
-        foreground = "#${colors.text}";
-        frame_color = "#${colors.sapphire}";
+        background = "#1e1e1ee6";
+        foreground = "#ededed";
+        frame_color = "#ffffff26";
         timeout = 8;
       };
       urgency_critical = {
-        background = "#${colors.base}";
-        foreground = "#${colors.text}";
-        frame_color = "#${colors.red}";
+        background = "#2a1416e6";
+        foreground = "#ffffff";
+        frame_color = "#ff5f57aa";
         timeout = 0;
       };
     };
