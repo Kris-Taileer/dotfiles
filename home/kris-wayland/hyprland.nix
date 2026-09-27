@@ -67,6 +67,15 @@ let
     installPhase = "mkdir -p $out/lib; cp hyprglass.so $out/lib/libhyprglass.so";
     meta = { description = "Apple-style Liquid Glass effect for Hyprland"; };
   };
+
+  # White (monochrome) wlogout icons — the stock lock icon ships purple.
+  wlogoutIcons = pkgs.runCommand "wlogout-white-icons"
+    { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
+    mkdir -p $out
+    for f in ${pkgs.wlogout}/share/wlogout/icons/*.png; do
+      magick "$f" -channel RGB -fill white -colorize 100 "$out/$(basename "$f")"
+    done
+  '';
 in
 {
   wayland.windowManager.hyprland = {
@@ -81,7 +90,7 @@ in
     # hyprglass REMOVED: its layer-render hook makes waybar/plank surfaces
     # invisible just by loading (poisons layer compositing). Glass comes from
     # native Hyprland blur instead. Keep only hyprspace (Mission Control).
-    plugins = [ pkgs.hyprlandPlugins.hyprspace ];
+    plugins = [ pkgs.hyprlandPlugins.hyprspace pkgs.hyprlandPlugins.hyprbars ];
 
     settings = {
       "$mod" = "SUPER";
@@ -111,9 +120,9 @@ in
         "awww-daemon"
         "sleep 1 && awww img ~/.config/hypr/wallpaper.png"
         "waybar -c ~/.config/waybar-mac/config.jsonc -s ~/.config/waybar-mac/style.css"
-        "dunst"
         "wl-paste --watch cliphist store"   # record clipboard history (SUPER+V picker)
-        "swayidle -w timeout 300 hyprlock timeout 600 'systemctl suspend' before-sleep hyprlock"
+        "waycorner"                         # macOS hot corners
+        # idle/lock is handled by hypridle (services.hypridle in desktop.nix)
       ];
 
       general = {
@@ -220,6 +229,25 @@ in
 
       # KZDKM/Hyprspace = the workspace overview (Mission Control).
       # Toggle via SUPER+grave or 4-finger swipe up.
+      # macOS-style title bars — monochrome grey traffic-light buttons.
+      plugin.hyprbars = {
+        bar_height = 28;
+        bar_color = "rgba(1e1e1ecc)";
+        "col.text" = "rgba(edededff)";
+        bar_text_font = "Monocraft";
+        bar_text_size = 11;
+        bar_text_align = "center";
+        bar_part_of_window = true;
+        bar_precedence_over_border = true;
+        bar_padding = 12;
+        bar_button_padding = 8;
+        hyprbars-button = [
+          "rgb(cfcfd2), 12, , hyprctl dispatch killactive"                          # close
+          "rgb(9a9a9e), 12, , hyprctl dispatch fullscreen 1"                        # maximize
+          "rgb(6a6a6e), 12, , hyprctl dispatch movetoworkspacesilent special:minimized"  # minimize
+        ];
+      };
+
       plugin.overview = {
         centerAligned = true;
         hideTopLayers = true;
@@ -258,8 +286,10 @@ in
         "ignore_alpha 0.5, match:namespace ^(dock)$"
         "blur 1, match:namespace ^(wofi)$"
         "ignore_alpha 0.5, match:namespace ^(wofi)$"
-        "blur 1, match:namespace ^(notifications)$"
-        "ignore_alpha 0.5, match:namespace ^(notifications)$"
+        "blur 1, match:namespace ^(swaync-control-center)$"
+        "ignore_alpha 0.5, match:namespace ^(swaync-control-center)$"
+        "blur 1, match:namespace ^(swaync-notification-window)$"
+        "ignore_alpha 0.5, match:namespace ^(swaync-notification-window)$"
       ];
 
       # 0.55 window-rule syntax: `<effect> <value>, match:<prop> <regex>`.
@@ -318,8 +348,11 @@ in
         "ALT, Tab, bringactivetotop"
         "$mod, comma, movetoworkspacesilent, special:minimized" # Cmd+H       hide window
         "$mod SHIFT, comma, togglespecialworkspace, minimized"  #             peek/restore hidden
-        "$mod, period, exec, bemoji"                            # Ctrl+Cmd+Space  emoji picker
+        "$mod, period, exec, bemoji -p -P 0"                    # emoji picker (no recent-history section)
         "$mod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"  # clipboard history
+        "$mod SHIFT, N, exec, swaync-client -t -sw"             # toggle Notification Center
+        "$mod, Escape, exec, wlogout -b 5 -T 50 -B 1140 -L 680 -R 680 -c 14 -r 14"  # compact top-center power menu
+        "$mod SHIFT, C, exec, hyprpicker -a"                    # color picker → clipboard
 
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
@@ -359,12 +392,13 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
       ];
 
+      # Media keys go through avizo's volumectl/lightctl so the OSD popup shows.
       bindel = [
-        ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-        ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ",XF86MonBrightnessUp, exec, brightnessctl set 5%+"
-        ",XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+        ",XF86AudioRaiseVolume, exec, volumectl -u up"
+        ",XF86AudioLowerVolume, exec, volumectl -u down"
+        ",XF86AudioMute, exec, volumectl toggle-mute"
+        ",XF86MonBrightnessUp, exec, lightctl up"
+        ",XF86MonBrightnessDown, exec, lightctl down"
       ];
 
       bindl = [
@@ -416,6 +450,8 @@ in
     playerctl
     bemoji               # emoji picker (SUPER+.)
     cliphist             # clipboard history (SUPER+V)
+    wlogout              # power menu (SUPER+Escape)
+    waycorner            # macOS hot corners
     polkit_gnome
     whitesur-gtk-theme
     whitesur-icon-theme
@@ -423,6 +459,54 @@ in
 
   home.file = {
     ".config/hypr/wallpaper.png".source = ./wallpapers/wallpaper.png;
+
+    # ---- waycorner: macOS hot corners ----
+    ".config/waycorner/config.toml".text = ''
+      [mission-control]
+      enter_command = ["hyprctl", "dispatch", "overview:toggle"]
+      locations = ["top_right"]
+      size = 10
+      timeout_ms = 200
+
+      [lock]
+      enter_command = ["hyprlock"]
+      locations = ["bottom_left"]
+      size = 10
+      timeout_ms = 500
+    '';
+
+    # ---- wlogout: macOS-style power menu (SUPER+Escape) ----
+    ".config/wlogout/layout".text = ''
+      { "label": "lock",     "action": "hyprlock",              "text": "Lock",     "keybind": "l" }
+      { "label": "suspend",  "action": "systemctl suspend",     "text": "Sleep",    "keybind": "s" }
+      { "label": "logout",   "action": "hyprctl dispatch exit", "text": "Log Out",  "keybind": "e" }
+      { "label": "reboot",   "action": "systemctl reboot",      "text": "Restart",  "keybind": "r" }
+      { "label": "shutdown", "action": "systemctl poweroff",    "text": "Shut Down","keybind": "p" }
+    '';
+    ".config/wlogout/style.css".text = ''
+      * { font-family: "Monocraft", "JetBrainsMono Nerd Font"; color: #e8e8ea; }
+      window { background: rgba(16, 16, 18, 0.5); }
+      button {
+        background-color: rgba(44, 44, 46, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        margin: 8px;
+        background-repeat: no-repeat;
+        background-position: center 30%;
+        background-size: 26%;
+        outline: none;
+        transition: all 150ms ease;
+      }
+      button:focus, button:hover {
+        background-color: rgba(255, 255, 255, 0.16);   /* monochrome hover */
+        border-color: rgba(255, 255, 255, 0.30);
+      }
+      #lock     { background-image: image(url("${wlogoutIcons}/lock.png")); }
+      #logout   { background-image: image(url("${wlogoutIcons}/logout.png")); }
+      #suspend  { background-image: image(url("${wlogoutIcons}/suspend.png")); }
+      #reboot   { background-image: image(url("${wlogoutIcons}/reboot.png")); }
+      #shutdown { background-image: image(url("${wlogoutIcons}/shutdown.png")); }
+    '';
 
 
     ".config/waybar-mac/config.jsonc".text = builtins.toJSON {
