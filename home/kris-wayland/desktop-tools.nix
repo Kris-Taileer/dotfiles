@@ -1,6 +1,20 @@
 { pkgs, ... }:
 let
   colors = import ./theme.nix;
+
+  # Avizo with white icons (its icons are compiled-in SVG/PNG; recolor them all
+  # to white so the OSD reads clean on the dark popup).
+  avizoWhite = pkgs.avizo.overrideAttrs (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
+    postPatch = (old.postPatch or "") + ''
+      for f in data/images/*.svg; do
+        sed -i 's/#[0-9a-fA-F]\{6\}/#ffffff/g' "$f"
+      done
+      for f in data/images/*.png; do
+        magick "$f" -channel RGB -fill white -colorize 100 "$f"
+      done
+    '';
+  });
   rofiTheme = pkgs.writeText "rofi-theme.rasi" ''
     * {
       bg:     #0d0e1a;
@@ -39,46 +53,94 @@ let
   '';
 in
 {
-  services.dunst = {
+  # macOS-style Notification Center (replaces dunst). Systemd-autostarted in
+  # the Hyprland session; toggle the panel with SUPER+Shift+N.
+  services.swaync = {
     enable = true;
     settings = {
-      # Sonoma-dark glass: translucent graphite (the ~e6 alpha lets the
-      # Hyprland `notifications` blur rule frost it), subtle white hairline.
-      global = {
-        width = 360;
-        height = 110;
-        origin = "top-right";
-        offset = "14x14";
-        frame_width = 1;
-        frame_color = "#ffffff26";
-        separator_color = "frame";
-        font = "Monocraft 10";
-        corner_radius = 16;
-        background = "#1e1e1ee6";
-        foreground = "#ededed";
-        padding = 14;
-        horizontal_padding = 16;
-        text_icon_padding = 10;
-        gap_size = 8;
+      positionX = "right";
+      positionY = "top";
+      control-center-margin-top = 10;
+      control-center-margin-right = 10;
+      control-center-margin-bottom = 10;
+      control-center-width = 400;
+      notification-window-width = 400;
+      timeout = 8;
+      timeout-low = 5;
+      timeout-critical = 0;
+      fit-to-screen = false;
+      keyboard-shortcuts = true;
+      image-visibility = "when-available";
+      widgets = [ "title" "dnd" "notifications" ];
+      widget-config = {
+        title = { text = "Notifications"; clear-all-button = true; button-text = "Clear all"; };
+        dnd = { text = "Do Not Disturb"; };
       };
-      urgency_low = {
-        background = "#1e1e1ecc";
-        foreground = "#a0a0a5";
-        frame_color = "#ffffff1a";
-        timeout = 5;
-      };
-      urgency_normal = {
-        background = "#1e1e1ee6";
-        foreground = "#ededed";
-        frame_color = "#ffffff26";
-        timeout = 8;
-      };
-      urgency_critical = {
-        background = "#2a1416e6";
-        foreground = "#ffffff";
-        frame_color = "#ff5f57aa";
-        timeout = 0;
-      };
+    };
+    style = ''
+      * { font-family: "Monocraft", "JetBrainsMono Nerd Font"; }
+      .control-center {
+        background: rgba(28, 28, 30, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        color: #ededed;
+      }
+      .control-center-list { background: transparent; }
+      .notification, .notification-row .notification-background .notification {
+        background: rgba(44, 44, 46, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+        margin: 6px 8px;
+        padding: 4px;
+      }
+      .notification-content { color: #ededed; padding: 6px; }
+      .summary { color: #ffffff; font-weight: 600; }
+      .close-button {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 100%;
+        color: #ededed;
+        margin: 4px;
+      }
+      .widget-title { color: #ededed; font-weight: 600; margin: 10px 12px 4px 12px; }
+      .widget-title > button {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #ededed;
+        padding: 4px 12px;
+      }
+      .widget-dnd { color: #ededed; margin: 4px 12px; }
+      .widget-dnd > switch {
+        background: rgba(255, 255, 255, 0.14);
+        border-radius: 100px;
+      }
+      .widget-dnd > switch:checked { background: rgba(255, 255, 255, 0.55); }
+      .floating-notifications .notification {
+        background: rgba(28, 28, 30, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+      }
+    '';
+  };
+
+  # macOS-style volume/brightness OSD popups (bound to the media keys below).
+  services.avizo = {
+    enable = true;
+    package = avizoWhite;
+    settings.default = {
+      time = 1.2;
+      y-offset = 0.12;
+      fade-in = 0.1;
+      fade-out = 0.25;
+      padding = 14;
+      border-radius = 18;
+      border-width = 1;
+      border-color = "rgba(255, 255, 255, 0.12)";
+      background = "rgba(28, 28, 30, 0.9)";
+      bar-fg-color = "rgba(255, 255, 255, 0.92)";
+      bar-bg-color = "rgba(255, 255, 255, 0.14)";
+      block-height = 8;
+      block-spacing = 3;
+      block-count = 20;
     };
   };
 
