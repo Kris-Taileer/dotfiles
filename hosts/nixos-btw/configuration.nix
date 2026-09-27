@@ -156,6 +156,17 @@
   services.tailscale.enable = true;
   services.openssh.enable = true;
 
+  # --- Battery: keep these dev daemons configured but NOT autostarted at boot ---
+  # They idle-drain (couchdb's beam.smp alone ~2-3% CPU). Docker + libvirtd stay
+  # socket-activated (start on first `docker`/virt-manager use). CouchDB and
+  # Tailscale start on demand:
+  #   systemctl start couchdb
+  #   sudo systemctl start tailscaled && sudo tailscale up
+  virtualisation.docker.enableOnBoot   = false;
+  systemd.services.couchdb.wantedBy    = lib.mkForce [ ];
+  systemd.services.libvirtd.wantedBy   = lib.mkForce [ ];
+  systemd.services.tailscaled.wantedBy = lib.mkForce [ ];
+
   # Dedicated tunnel to the VPS (77.91.87.139) so the Minecraft server (behind CGNAT
   # here) is reachable through the VPS's public IP, independent of Amnezia's own
   # WireGuard/AmneziaWG stack running there.
