@@ -9,9 +9,12 @@
 		./packages.nix
 		./desktop.nix
 		./desktop-tools.nix
+		./screenshot.nix
 		./dev.nix
 		./terminal.nix
 		./waybar.nix
+		./hyprland.nix
+		./osu.nix
 	];
 	home.username = "kris";
 	home.homeDirectory = "/home/kris";

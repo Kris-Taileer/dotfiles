@@ -10,6 +10,7 @@
     docker-compose
     htop
     go
+    # ollydbg: removed from nixpkgs (32-bit only). Run x64dbg.exe under wine for 64-bit targets.
     (python3.withPackages (ps: with ps; [ rich art ]))
     fastfetch
     btop
@@ -90,7 +91,8 @@
     jadx
     dart
     openconnect
-    wine
+    wineWowPackages.stable
+    winetricks
     nasm
     lolcat
     linux_logo
@@ -131,7 +133,12 @@
     prismlauncher
     mc
     p7zip
-
+    
+    chameleon-cli
+    gh
+    gnumake
+    cmake
+    devbox
     ansible
     rsync
     pssh
