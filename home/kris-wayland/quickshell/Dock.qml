@@ -19,6 +19,7 @@ PanelWindow {
     readonly property int base: 106
     readonly property real peak: 1.4
     readonly property real sigma: 100
+    property real mx: -10000        // cursor x for magnification (missing → NaN scale → invisible icons)
     property bool hovering: false
 
     readonly property bool revealed: revealHover.hovered || hovering
@@ -183,8 +184,8 @@ PanelWindow {
             scale: it.scl
             transformOrigin: Item.Bottom
             IconImage {
-                anchors.fill: parent
-                anchors.margins: 8
+                anchors.centerIn: parent
+                implicitSize: dock.base - 14   // MUST be set — IconImage rasterizes at implicitSize
                 source: it.icon
                 visible: it.icon.length > 0
             }
