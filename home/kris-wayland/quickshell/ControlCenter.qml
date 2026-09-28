@@ -97,7 +97,7 @@ PanelWindow {
                     glyph: "\uf023"
                     label: "Lock Screen"
                     on: false
-                    onTap: { UI.closeCC(); Hyprland.dispatch("exec hyprlock"); }
+                    onTap: { UI.closeCC(); Hyprland.dispatch("exec applelock"); }
                 }
             }
 
