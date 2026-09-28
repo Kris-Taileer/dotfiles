@@ -1,62 +1,77 @@
 { config, pkgs, ... }:
-let
-  colors = import ./theme.nix;
-in
 {
   programs.hyprlock = {
     enable = true;
+    # macOS Sonoma-style lock: the wallpaper as a heavily-blurred, dimmed
+    # "frosted curtain", a large clock with the date above it in the upper third,
+    # and a minimal password pill that stays hidden until you type — so at rest
+    # it's only time + date + background.
     extraConfig = ''
       general {
-        disable_loading_bar = true
         hide_cursor = true
-        grace = 0
       }
 
+      # require the password immediately on lock (grace is a top-level option)
+      grace = 0
+
+      # frosted curtain = the wallpaper itself, lightly blurred (NOT dimmed to
+      # black — the wallpaper is a dark space scene, so keep brightness ~full so
+      # the accretion disk still glows through).
       background {
         monitor =
-        path = screenshot
-        color = rgba(${colors.base}ff)
+        path = ${config.home.homeDirectory}/.config/hypr/wallpaper.png
+        blur_passes = 2
+        blur_size = 6
+        noise = 0.01
+        contrast = 1.0
+        brightness = 0.92
+        vibrancy = 0.15
       }
 
-      label {
-        monitor =
-        text = cmd[update:1000] echo "$(date +'%-H:%M')"
-        color = rgba(${colors.text}ff)
-        font_size = 80
-        font_family = Monocraft
-        position = 0, 160
-        halign = center
-        valign = center
-      }
-
+      # date — small, above the clock (macOS/iOS order)
       label {
         monitor =
         text = cmd[update:60000] date +'%A, %-d %B'
-        color = rgba(${colors.overlay0}ff)
-        font_size = 11
+        color = rgba(ededede6)
+        font_size = 21
         font_family = Monocraft
-        position = 0, 90
+        position = 0, 348
         halign = center
         valign = center
       }
 
+      # time — large, upper third
+      label {
+        monitor =
+        text = cmd[update:1000] date +'%H:%M'
+        color = rgba(ffffffff)
+        font_size = 120
+        font_family = Monocraft
+        position = 0, 232
+        halign = center
+        valign = center
+      }
+
+      # minimal password pill — lower centre, invisible until you type
       input-field {
         monitor =
-        size = 250, 50
-        outline_thickness = 3
-        dots_size = 0.33
-        dots_spacing = 0.15
+        size = 300, 52
+        outline_thickness = 2
+        dots_size = 0.28
+        dots_spacing = 0.32
         dots_center = true
-        outer_color = rgb(${colors.overlay0})
-        inner_color = rgb(${colors.surface0})
-        font_color = rgb(${colors.text})
-        check_color = rgb(${colors.sapphire})
-        fail_color = rgb(${colors.red})
-        capslock_color = rgb(${colors.yellow})
+        rounding = 26
+        outer_color = rgba(ffffff33)
+        inner_color = rgba(ffffff24)
+        font_color = rgba(edededff)
+        check_color = rgba(0a84ffff)
+        fail_color = rgba(ff5f57ff)
+        capslock_color = rgba(ffd479ff)
         fade_on_empty = true
+        fade_timeout = 1000
         placeholder_text =
-        fail_text = $FAIL ($ATTEMPTS)
-        position = 0, -60
+        fail_text = $FAIL
+        position = 0, -360
         halign = center
         valign = center
       }
@@ -68,7 +83,7 @@ in
     enable = true;
     settings = {
       general = {
-        lock_cmd = "pidof hyprlock || hyprlock";
+        lock_cmd = "applelock";   # macOS curtain lock (flock-deduped)
         before_sleep_cmd = "loginctl lock-session";
         after_sleep_cmd = "hyprctl dispatch dpms on";
       };

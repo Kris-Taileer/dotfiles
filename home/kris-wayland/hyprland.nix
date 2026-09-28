@@ -72,6 +72,17 @@ let
       | while read -r _; do apply; done
   '';
 
+  # Lock wrapper. NOTE: the Quickshell "curtain" session-lock
+  # (home/quickshell/lock) FROZE on password entry — its PAM auth never
+  # completes and there's no safe way to test unlock without risking a lockout.
+  # So applelock now runs **hyprlock** (rock-solid) with the macOS lock config in
+  # desktop.nix. flock dedups so idle-lock + manual lock don't stack.
+  # (The curtain lock QML is kept in-repo for a future, carefully-tested fix.)
+  applelock = pkgs.writeShellScriptBin "applelock" ''
+    exec ${pkgs.util-linux}/bin/flock -n /run/user/$(${pkgs.coreutils}/bin/id -u)/applelock.lock \
+      ${pkgs.hyprlock}/bin/hyprlock
+  '';
+
   # Apple-style Liquid Glass (refraction/specular/fresnel/chromatic-aberration).
   # Pinned to the hyprglass commit that hyprpm maps to Hyprland 0.55.4 — built
   # from source via mkHyprlandPlugin so it links to our Nix-store libs (prebuilt
@@ -352,7 +363,7 @@ in
         "$mod, Q, killactive"
         "$mod, F, fullscreen, 0"
         "$mod, E, togglefloating"
-        "$mod, L, exec, hyprlock"
+        "$mod, L, exec, applelock"
         # Mission Control. Bind to `exec` (an always-present dispatcher) rather
         # than the plugin's `overview:toggle` directly: the plugin loads after
         # config parse, and Hyprland DROPS binds whose dispatcher is unknown at
@@ -367,7 +378,7 @@ in
         # ---- macOS-style shortcuts ----
         "$mod, W, killactive"                                    # Cmd+W  close window
         "$mod ALT, Q, forcekillactive"                           # Cmd+Opt+Esc  force quit
-        "CTRL $mod, Q, exec, hyprlock"                           # Ctrl+Cmd+Q  lock
+        "CTRL $mod, Q, exec, applelock"                          # Ctrl+Cmd+Q  lock
         # (Ctrl+arrows intentionally left UNBOUND so apps get word-jump / native use)
         "ALT, Tab, cyclenext"                                    # Cmd+Tab     window switcher
         "ALT, Tab, bringactivetotop"
@@ -474,6 +485,7 @@ in
     # (apple-cursor is installed via home.pointerCursor in desktop.nix)
     hyprshot             # Hyprland-native screenshots (defined above)
     refreshSync          # 120/60Hz auto-switch on AC/battery (defined above)
+    applelock            # macOS curtain lock wrapper (defined above)
     quickshell           # QtQuick Wayland shell (bar/notch/dock/control-center)
     hyprpicker
     playerctl
@@ -501,7 +513,7 @@ in
       timeout_ms = 200
 
       [lock]
-      enter_command = ["hyprlock"]
+      enter_command = ["applelock"]
       locations = ["bottom_left"]
       size = 10
       timeout_ms = 500
@@ -509,7 +521,7 @@ in
 
     # ---- wlogout: macOS-style power menu (SUPER+Escape) ----
     ".config/wlogout/layout".text = ''
-      { "label": "lock",     "action": "hyprlock",              "text": "Lock",     "keybind": "l" }
+      { "label": "lock",     "action": "applelock",             "text": "Lock",     "keybind": "l" }
       { "label": "suspend",  "action": "systemctl suspend",     "text": "Sleep",    "keybind": "s" }
       { "label": "logout",   "action": "hyprctl dispatch exit", "text": "Log Out",  "keybind": "e" }
       { "label": "reboot",   "action": "systemctl reboot",      "text": "Restart",  "keybind": "r" }
