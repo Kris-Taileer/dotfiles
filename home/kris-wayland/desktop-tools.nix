@@ -2,8 +2,6 @@
 let
   colors = import ./theme.nix;
 
-  # Avizo with white icons (its icons are compiled-in SVG/PNG; recolor them all
-  # to white so the OSD reads clean on the dark popup).
   avizoWhite = pkgs.avizo.overrideAttrs (old: {
     nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
     postPatch = (old.postPatch or "") + ''
@@ -53,8 +51,7 @@ let
   '';
 in
 {
-  # macOS-style Notification Center (replaces dunst). Systemd-autostarted in
-  # the Hyprland session; toggle the panel with SUPER+Shift+N.
+
   services.swaync = {
     enable = true;
     settings = {
@@ -122,7 +119,6 @@ in
     '';
   };
 
-  # macOS-style volume/brightness OSD popups (bound to the media keys below).
   services.avizo = {
     enable = true;
     package = avizoWhite;

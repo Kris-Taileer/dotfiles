@@ -2,10 +2,7 @@
 {
   programs.hyprlock = {
     enable = true;
-    # macOS Sonoma-style lock: the wallpaper as a heavily-blurred, dimmed
-    # "frosted curtain", a large clock with the date above it in the upper third,
-    # and a minimal password pill that stays hidden until you type — so at rest
-    # it's only time + date + background.
+
     extraConfig = ''
       general {
         hide_cursor = true
@@ -77,13 +74,12 @@
       }
     '';
   };
-  # macOS-style staged idle: dim → lock (hyprlock clock) → screen off → suspend.
-  # (Wayland has no animated screensaver; hyprlock's clock is the "screensaver".)
+
   services.hypridle = {
     enable = true;
     settings = {
       general = {
-        lock_cmd = "applelock";   # macOS curtain lock (flock-deduped)
+        lock_cmd = "applelock";
         before_sleep_cmd = "loginctl lock-session";
         after_sleep_cmd = "hyprctl dispatch dpms on";
       };
@@ -98,7 +94,7 @@
 
   home.pointerCursor = {
     enable  = true;
-    package = pkgs.apple-cursor;   # ful1e5/apple_cursor
+    package = pkgs.apple-cursor;
     name    = "macOS";
     size    = 24;
     gtk.enable = true;

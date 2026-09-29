@@ -1,18 +1,14 @@
 { config, lib, pkgs, inputs, ... }:
-# macOS-like Hyprland rice — functionality-first pass.
-# Sonoma-dark palette lives in `c` below; swap these values (and the Waybar /
-# wofi CSS at the bottom) when the reference rice configs land.
+
 let
   c = {
-    bg       = "1e1e1e";  # window / base graphite
+    bg       = "1e1e1e";
     text     = "ededed";
     subtext  = "a0a0a5";
-    accent   = "0a84ff";  # macOS dark-mode blue
-    border   = "ffffff";  # active border, used at low alpha
+    accent   = "0a84ff";
+    border   = "ffffff";
   };
 
-  # Hyprland-native screenshots (driftshot is driftwm-only). Same UX/keys:
-  # region -> satty annotator, screen/window -> straight to file + clipboard.
   hyprshot = pkgs.writeShellScriptBin "hyprshot" ''
     set -euo pipefail
     grim="${pkgs.grim}/bin/grim"
@@ -49,51 +45,18 @@ let
     esac
   '';
 
-  # Battery: drop the panel to 60Hz on battery, back to 120Hz on AC. Event-driven
-  # (udev power_supply events) rather than polling, and idempotent (only calls
-  # hyprctl when the AC state actually flips). Runs inside the session as an
-  # exec-once, so hyprctl auto-resolves the instance.
-  refreshSync = pkgs.writeShellScriptBin "refresh-sync" ''
-    AC=/sys/class/power_supply/AC0/online
-    hyprctl="${pkgs.hyprland}/bin/hyprctl"
-    last=""
-    apply() {
-      on="$(cat "$AC" 2>/dev/null)"
-      [ "$on" = "$last" ] && return
-      last="$on"
-      if [ "$on" = "1" ]; then
-        "$hyprctl" keyword monitor "eDP-1,2880x1800@120,auto,1.333333"
-      else
-        "$hyprctl" keyword monitor "eDP-1,2880x1800@60,auto,1.333333"
-      fi
-    }
-    apply
-    ${pkgs.systemd}/bin/udevadm monitor --udev --subsystem-match=power_supply \
-      | while read -r _; do apply; done
-  '';
-
-  # Lock wrapper. NOTE: the Quickshell "curtain" session-lock
-  # (home/quickshell/lock) FROZE on password entry — its PAM auth never
-  # completes and there's no safe way to test unlock without risking a lockout.
-  # So applelock now runs **hyprlock** (rock-solid) with the macOS lock config in
-  # desktop.nix. flock dedups so idle-lock + manual lock don't stack.
-  # (The curtain lock QML is kept in-repo for a future, carefully-tested fix.)
   applelock = pkgs.writeShellScriptBin "applelock" ''
     exec ${pkgs.util-linux}/bin/flock -n /run/user/$(${pkgs.coreutils}/bin/id -u)/applelock.lock \
       ${pkgs.hyprlock}/bin/hyprlock
   '';
 
-  # Apple-style Liquid Glass (refraction/specular/fresnel/chromatic-aberration).
-  # Pinned to the hyprglass commit that hyprpm maps to Hyprland 0.55.4 — built
-  # from source via mkHyprlandPlugin so it links to our Nix-store libs (prebuilt
-  # .so's fail on NixOS: wrong soname / no libaquamarine in a standard path).
   hyprglass = pkgs.hyprlandPlugins.mkHyprlandPlugin {
     pluginName = "hyprglass";
     version = "0.6.4";
     src = pkgs.fetchFromGitHub {
       owner = "hyprnux";
       repo = "hyprglass";
-      rev = "7ff4064cbed1ef6e6f703139fca4ec20ba0cbb5b"; # hyprpm pin for hl 0.55.4
+      rev = "7ff4064cbed1ef6e6f703139fca4ec20ba0cbb5b";
       hash = "sha256-e60+3KjFJOIi4DqcpxkeADsdApV+Cso2mwRA9t1Fs3U=";
     };
     dontConfigure = true;
@@ -102,7 +65,6 @@ let
     meta = { description = "Apple-style Liquid Glass effect for Hyprland"; };
   };
 
-  # White (monochrome) wlogout icons — the stock lock icon ships purple.
   wlogoutIcons = pkgs.runCommand "wlogout-white-icons"
     { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
     mkdir -p $out
@@ -114,57 +76,45 @@ in
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    # home.stateVersion 26.05 defaults configType to "lua", whose HM serializer
-    # emits broken Lua for `$mod` / `exec-once`. Pin the classic hyprlang
-    # (hyprland.conf) format — battle-tested and what every online config uses.
+
     configType = "hyprlang";
-    # nixpkgs Hyprland + matching plugin build from the same nixpkgs — no
-    # separate flake input, no long compile, stays on the binary cache.
-    # hyprspace = a zoom-out overview of all workspaces (Mission Control).
-    # hyprglass REMOVED: its layer-render hook makes waybar/plank surfaces
-    # invisible just by loading (poisons layer compositing). Glass comes from
-    # native Hyprland blur instead. Keep only hyprspace (Mission Control).
+
     plugins = [ pkgs.hyprlandPlugins.hyprspace pkgs.hyprlandPlugins.hyprbars ];
 
     settings = {
       "$mod" = "SUPER";
 
-      # Mirrors the driftwm output layout so displays behave the same here.
-      # Any external output duplicates (mirrors) the internal eDP-1 panel.
       monitor = [
-        "eDP-1,preferred,auto,1.333333"
+        "eDP-1,2880x1800@120,auto,1.333333"
         "HDMI-A-1,preferred,auto,1,mirror,eDP-1"
         ",preferred,auto,1,mirror,eDP-1"
       ];
 
       env = [
-        "XCURSOR_THEME,macOS"    # apple-cursor (global default is now macOS too)
+        "XCURSOR_THEME,macOS"
         "XCURSOR_SIZE,24"
         "HYPRCURSOR_SIZE,24"
-        "TERMINAL,ghostty"       # default terminal for apps that honour $TERMINAL
+        "TERMINAL,ghostty"
       ];
 
       exec-once = [
-        # Hand the Wayland session env to systemd + D-Bus so xdg-desktop-portal
-        # (screen sharing, file pickers) and other user services work.
+
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
-        # SSH agent / keyring, same handoff driftwm uses.
+
         "eval $(gnome-keyring-daemon --start --components=ssh) && systemctl --user import-environment SSH_AUTH_SOCK && dbus-update-activation-environment SSH_AUTH_SOCK"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "awww-daemon"
         "sleep 1 && awww img ~/.config/hypr/wallpaper.png"
-        "qs"   # Quickshell macOS shell: menu bar + Dynamic Island notch + dock + control center
-        "wl-paste --watch cliphist store"   # record clipboard history (SUPER+V picker)
-        "waycorner"                         # macOS hot corners
-        "refresh-sync"                      # 120Hz on AC / 60Hz on battery (battery saver)
-        # idle/lock is handled by hypridle (services.hypridle in desktop.nix)
+        "qs"
+        "wl-paste --watch cliphist store"
+        "waycorner"
       ];
 
       general = {
         gaps_in = 6;
         gaps_out = 12;
         border_size = 1;
-        "col.active_border" = "rgba(${c.border}59)";   # ~35% white, subtle
+        "col.active_border" = "rgba(${c.border}59)";
         "col.inactive_border" = "rgba(${c.bg}00)";
         layout = "dwindle";
         resize_on_border = true;
@@ -172,17 +122,11 @@ in
 
       decoration = {
         rounding = 12;
-        # hyprglass: clearly translucent so the frosted blur reads at a glance.
-        # xray = false → the blur shows the blurred windows *behind*, not just
-        # the wallpaper (the classic layered-glass look). Costs a bit more GPU,
-        # but this laptop handles it. Media/readability apps forced opaque below.
+
         active_opacity = 0.85;
         inactive_opacity = 0.70;
         dim_inactive = false;
 
-        # Native blur ON — it glasses the bar / dock / launcher (layer
-        # surfaces). hyprglass is windows-ONLY: its layer render hook makes
-        # waybar surfaces invisible (bars vanish), so it must not touch layers.
         blur = {
           enabled = true;
           size = 6;
@@ -199,7 +143,6 @@ in
         };
       };
 
-      # Snappy but smooth macOS-style easing (easeOutExpo-ish).
       animations = {
         enabled = true;
         bezier = [
@@ -231,40 +174,29 @@ in
         };
       };
 
-      # 0.55 removed gestures:workspace_swipe / _fingers; these remain as tuning.
       gestures = {
         workspace_swipe_distance = 400;
         workspace_swipe_cancel_ratio = 0.2;
       };
 
-      # Swipe is now enabled via the `gesture` keyword:
-      #   3-finger horizontal = switch Spaces
-      #   4-finger up         = Mission Control (macOS parity)
-      # The dispatcher resolves at gesture time, after the plugin has loaded.
       gesture = [
         "3, horizontal, workspace"
-        "4, down, dispatcher, overview:open"    # Mission Control: swipe down to open
-        "4, up, dispatcher, overview:close"     # swipe up to close
+        "4, down, dispatcher, overview:open"
+        "4, up, dispatcher, overview:close"
       ];
 
       misc = {
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
         force_default_wallpaper = 0;
-        # NOTE: misc:vrr and render:direct_scanout were REMOVED. On this eDP
-        # panel (2880x1800@120Hz) they made the first atomic DRM modeset fail
-        # with "Invalid argument" and loop page-flip commits (unusable display).
-        # VFR is on by default in 0.55 and already covers the idle-power win.
+
       };
 
       dwindle = {
         preserve_split = true;
-        # (dwindle:pseudotile was removed in 0.55; use the `pseudo` dispatcher)
+
       };
 
-      # KZDKM/Hyprspace = the workspace overview (Mission Control).
-      # Toggle via SUPER+grave or 4-finger swipe up.
-      # macOS-style title bars — monochrome grey traffic-light buttons.
       plugin.hyprbars = {
         bar_height = 28;
         bar_color = "rgba(1e1e1ecc)";
@@ -277,9 +209,9 @@ in
         bar_padding = 12;
         bar_button_padding = 8;
         hyprbars-button = [
-          "rgb(cfcfd2), 12, , hyprctl dispatch killactive"                          # close
-          "rgb(9a9a9e), 12, , hyprctl dispatch fullscreen 1"                        # maximize
-          "rgb(6a6a6e), 12, , hyprctl dispatch movetoworkspacesilent special:minimized"  # minimize
+          "rgb(cfcfd2), 12, , hyprctl dispatch killactive"
+          "rgb(9a9a9e), 12, , hyprctl dispatch fullscreen 1"
+          "rgb(6a6a6e), 12, , hyprctl dispatch movetoworkspacesilent special:minimized"
         ];
       };
 
@@ -291,11 +223,9 @@ in
         showNewWorkspace = true;
         exitOnClick = true;
         exitOnSwitch = true;
-        overrideAnimSpeed = 6;   # smoother/gentler open-close than the window default
+        overrideAnimSpeed = 6;
       };
 
-      # Liquid Glass (hyprglass). Tuned for a subtle Sonoma frosted look; blur
-      # iterations kept low for battery. Also glasses the bar/dock/launcher.
       plugin.hyprglass = {
         enabled = 1;
         default_theme = "dark";
@@ -307,15 +237,12 @@ in
         specular_strength = 0.3;
         glass_opacity = 0.85;
         edge_thickness = 0.06;
-        # layers MUST stay OFF: hyprglass's layer render hook makes the waybar
-        # bars invisible. The bars get their glass from native blur instead.
+
         layers.enabled = 0;
       };
 
-      # Real glass under the bar / launcher / dock. 0.55 syntax:
-      #   `<effect> <value>, match:<prop> <regex>`  (ignorezero -> ignore_alpha)
       layerrule = [
-        # Quickshell shell surfaces — frosted glass via native blur.
+
         "blur 1, match:namespace ^(qs-bar)$"
         "ignore_alpha 0.5, match:namespace ^(qs-bar)$"
         "blur 1, match:namespace ^(qs-dock)$"
@@ -330,7 +257,6 @@ in
         "ignore_alpha 0.5, match:namespace ^(swaync-notification-window)$"
       ];
 
-      # 0.55 window-rule syntax: `<effect> <value>, match:<prop> <regex>`.
       windowrule = [
         "float 1, match:class ^(pavucontrol)$"
         "float 1, match:class ^(org.pulseaudio.pavucontrol)$"
@@ -340,7 +266,6 @@ in
         "float 1, match:title ^(Save File)$"
         "suppress_event maximize, match:class .*"
 
-        # Glass would wash these out — force them opaque.
         "opaque 1, match:class ^(mpv)$"
         "opaque 1, match:class ^(imv)$"
         "opaque 1, match:class ^(org.kde.gwenview)$"
@@ -349,7 +274,6 @@ in
         "opaque 1, match:class ^(steam)$"
         "opaque 1, match:class ^(lutris)$"
 
-        # Hero glass terminal — noticeably see-through.
         "opacity 0.78 0.62, match:class ^(Alacritty)$"
 
       ];
@@ -357,38 +281,34 @@ in
       bind = [
         "$mod, Return, exec, ghostty"
         "$mod, T, exec, ghostty"
-        "$mod, N, exec, ghostty -e nvim"           # glassy Neovim w/ cursor shader
-        "$mod, Space, exec, wofi --show drun"      # Spotlight
+        "$mod, N, exec, ghostty -e nvim"
+        "$mod, Space, exec, wofi --show drun"
         "$mod, D, exec, wofi --show drun"
         "$mod, Q, killactive"
         "$mod, F, fullscreen, 0"
         "$mod, E, togglefloating"
         "$mod, L, exec, applelock"
-        # Mission Control. Bind to `exec` (an always-present dispatcher) rather
-        # than the plugin's `overview:toggle` directly: the plugin loads after
-        # config parse, and Hyprland DROPS binds whose dispatcher is unknown at
-        # parse time. `hyprctl dispatch` resolves it at press time instead.
+
         "$mod, grave, exec, hyprctl dispatch overview:toggle"
-        "$mod SHIFT, Escape, exit"                 # log out of Hyprland
+        "$mod SHIFT, Escape, exit"
 
         "$mod, P, exec, hyprshot region"
         "$mod SHIFT, P, exec, hyprshot screen"
         "$mod CTRL, P, exec, hyprshot window"
 
-        # ---- macOS-style shortcuts ----
-        "$mod, W, killactive"                                    # Cmd+W  close window
-        "$mod ALT, Q, forcekillactive"                           # Cmd+Opt+Esc  force quit
-        "CTRL $mod, Q, exec, applelock"                          # Ctrl+Cmd+Q  lock
-        # (Ctrl+arrows intentionally left UNBOUND so apps get word-jump / native use)
-        "ALT, Tab, cyclenext"                                    # Cmd+Tab     window switcher
+        "$mod, W, killactive"
+        "$mod ALT, Q, forcekillactive"
+        "CTRL $mod, Q, exec, applelock"
+
+        "ALT, Tab, cyclenext"
         "ALT, Tab, bringactivetotop"
-        "$mod, comma, movetoworkspacesilent, special:minimized" # Cmd+H       hide window
-        "$mod SHIFT, comma, togglespecialworkspace, minimized"  #             peek/restore hidden
-        "$mod, period, exec, bemoji -p -P 0"                    # emoji picker (no recent-history section)
-        "$mod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"  # clipboard history
-        "$mod SHIFT, N, exec, swaync-client -t -sw"             # toggle Notification Center
-        "$mod, Escape, exec, wlogout -b 5 -T 50 -B 1140 -L 680 -R 680 -c 14 -r 14"  # compact top-center power menu
-        "$mod SHIFT, C, exec, hyprpicker -a"                    # color picker → clipboard
+        "$mod, comma, movetoworkspacesilent, special:minimized"
+        "$mod SHIFT, comma, togglespecialworkspace, minimized"
+        "$mod, period, exec, bemoji -p -P 0"
+        "$mod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+        "$mod SHIFT, N, exec, swaync-client -t -sw"
+        "$mod, Escape, exec, wlogout -b 5 -T 50 -B 1140 -L 680 -R 680 -c 14 -r 14"
+        "$mod SHIFT, C, exec, hyprpicker -a"
 
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
@@ -428,9 +348,6 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
       ];
 
-      # Volume keys use wpctl directly — the Dynamic Island notch is the volume
-      # OSD (it reacts to any Pipewire change). Brightness keeps avizo's OSD via
-      # lightctl (the notch doesn't surface brightness).
       bindel = [
         ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
         ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -470,29 +387,24 @@ in
     gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
   };
 
-  # libadwaita / GTK4 apps follow this; keeps everything dark without Plasma.
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
-  # Qt apps (Dolphin, Ark, Okular…) follow the GTK theme instead of defaulting
-  # to a light Fusion look now that Plasma's platform theme is gone.
   qt = {
     enable = true;
     platformTheme.name = "gtk3";
   };
 
   home.packages = with pkgs; [
-    # awww (swww fork) is already in packages.nix; it drives the wallpaper.
-    # (apple-cursor is installed via home.pointerCursor in desktop.nix)
-    hyprshot             # Hyprland-native screenshots (defined above)
-    refreshSync          # 120/60Hz auto-switch on AC/battery (defined above)
-    applelock            # macOS curtain lock wrapper (defined above)
-    quickshell           # QtQuick Wayland shell (bar/notch/dock/control-center)
+
+    hyprshot
+    applelock
+    quickshell
     hyprpicker
     playerctl
-    bemoji               # emoji picker (SUPER+.)
-    cliphist             # clipboard history (SUPER+V)
-    wlogout              # power menu (SUPER+Escape)
-    waycorner            # macOS hot corners
+    bemoji
+    cliphist
+    wlogout
+    waycorner
     polkit_gnome
     whitesur-gtk-theme
     whitesur-icon-theme
@@ -501,10 +413,8 @@ in
   home.file = {
     ".config/hypr/wallpaper.png".source = ./wallpapers/wallpaper.png;
 
-    # ---- Quickshell macOS unified shell (QML) ----
     ".config/quickshell".source = ./quickshell;
 
-    # ---- waycorner: macOS hot corners ----
     ".config/waycorner/config.toml".text = ''
       [mission-control]
       enter_command = ["hyprctl", "dispatch", "overview:toggle"]
@@ -519,7 +429,6 @@ in
       timeout_ms = 500
     '';
 
-    # ---- wlogout: macOS-style power menu (SUPER+Escape) ----
     ".config/wlogout/layout".text = ''
       { "label": "lock",     "action": "applelock",             "text": "Lock",     "keybind": "l" }
       { "label": "suspend",  "action": "systemctl suspend",     "text": "Sleep",    "keybind": "s" }
@@ -551,7 +460,6 @@ in
       #reboot   { background-image: image(url("${wlogoutIcons}/reboot.png")); }
       #shutdown { background-image: image(url("${wlogoutIcons}/shutdown.png")); }
     '';
-
 
     ".config/waybar-mac/config.jsonc".text = builtins.toJSON {
       name = "top";
@@ -585,7 +493,7 @@ in
         format = "{:%a %d %b  %H:%M}";
         tooltip-format = "<tt>{calendar}</tt>";
       };
-      # Brightness: scroll over it to change; icon dims/brightens with level.
+
       backlight = {
         format = "{icon} {percent}%";
         format-icons = [ "󰃞" "󰃟" "󰃠" ];
@@ -593,7 +501,7 @@ in
         on-scroll-up = "brightnessctl set +5%";
         on-scroll-down = "brightnessctl set 5%-";
       };
-      # Volume: scroll to change, click for mixer, right-click to mute.
+
       pulseaudio = {
         format = "{icon} {volume}%";
         format-muted = "󰝟 0%";
