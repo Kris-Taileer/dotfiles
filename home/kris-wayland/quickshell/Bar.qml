@@ -15,7 +15,6 @@ PanelWindow {
     WlrLayershell.namespace: "qs-bar"
     WlrLayershell.layer: WlrLayer.Top
 
-
     Rectangle {
         anchors.fill: parent
         color: Theme.barGlass
@@ -26,7 +25,6 @@ PanelWindow {
         color: Theme.hairline
     }
 
-
     readonly property var active: ToplevelManager.activeToplevel
     function prettyApp(t) {
         if (!t) return "Finder";
@@ -36,13 +34,12 @@ PanelWindow {
         return seg.charAt(0).toUpperCase() + seg.slice(1);
     }
 
-
     RowLayout {
         anchors { left: parent.left; leftMargin: 12; verticalCenter: parent.verticalCenter }
         spacing: 16
 
         Text {
-            text: "\uf179" //larp logo
+            text: "\uf179"
             font.family: Theme.iconFont
             font.pixelSize: 15
             color: Theme.white
@@ -67,7 +64,6 @@ PanelWindow {
         id: right
         anchors { right: parent.right; rightMargin: 8; verticalCenter: parent.verticalCenter }
         spacing: 4
-
 
         Repeater {
             model: SystemTray.items

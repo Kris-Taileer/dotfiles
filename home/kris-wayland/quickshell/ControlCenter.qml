@@ -83,7 +83,6 @@ PanelWindow {
                 }
             }
 
-
             Row {
                 width: parent.width
                 spacing: 10
