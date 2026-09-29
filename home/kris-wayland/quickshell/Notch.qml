@@ -4,7 +4,6 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 import QtQuick
 
-
 PanelWindow {
     id: w
     anchors { top: true }
@@ -22,7 +21,6 @@ PanelWindow {
     readonly property real volume: audio ? audio.volume : 0
     readonly property bool muted: audio ? audio.muted : false
 
-
     readonly property var players: Mpris.players ? Mpris.players.values : []
     readonly property var player: {
         if (!players || players.length === 0) return null;
@@ -31,7 +29,6 @@ PanelWindow {
         return players[0];
     }
     readonly property bool hasMedia: player !== null
-
 
     property string mode: "rest"
     property bool ready: false
@@ -219,7 +216,6 @@ PanelWindow {
             }
         }
     }
-
 
     component NotchButton: Text {
         property string glyph: ""

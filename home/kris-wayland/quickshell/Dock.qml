@@ -4,7 +4,6 @@ import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 
-
 PanelWindow {
     id: dock
     anchors { bottom: true }
@@ -19,7 +18,7 @@ PanelWindow {
     readonly property int base: 106
     readonly property real peak: 1.4
     readonly property real sigma: 100
-    property real mx: -10000        // cursor x for magnification (missing → NaN scale → invisible icons)
+    property real mx: -10000
     property bool hovering: false
 
     readonly property bool revealed: revealHover.hovered || hovering
@@ -57,7 +56,6 @@ PanelWindow {
         return out;
     }
 
-
     Item {
         id: revealArea
         anchors.bottom: parent.bottom
@@ -68,7 +66,6 @@ PanelWindow {
     }
     mask: Region { item: revealArea }
 
- 
     Rectangle {
         id: peek
         anchors.bottom: parent.bottom
@@ -90,7 +87,6 @@ PanelWindow {
         }
     }
 
- 
     Rectangle {
         id: bg
         anchors.horizontalCenter: parent.horizontalCenter
@@ -131,7 +127,6 @@ PanelWindow {
                     }
                 }
             }
-
 
             DockDivider { visible: dock.extras.length > 0 }
             Repeater {
@@ -185,12 +180,11 @@ PanelWindow {
             transformOrigin: Item.Bottom
             IconImage {
                 anchors.centerIn: parent
-                implicitSize: dock.base - 14   // MUST be set — IconImage rasterizes at implicitSize
+                implicitSize: dock.base - 14
                 source: it.icon
                 visible: it.icon.length > 0
             }
         }
-
 
         Rectangle {
             width: 5; height: 5; radius: 2.5

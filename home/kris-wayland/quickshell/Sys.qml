@@ -7,11 +7,9 @@ import QtQuick
 Singleton {
     id: root
 
-
     property int  battery: 0
     property bool charging: false
     property bool hasBattery: false
-
 
     property bool connected: false
     property bool wifi: false
