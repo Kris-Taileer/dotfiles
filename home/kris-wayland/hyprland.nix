@@ -451,7 +451,7 @@ in
         transition: all 150ms ease;
       }
       button:focus, button:hover {
-        background-color: rgba(255, 255, 255, 0.16);   /* monochrome hover */
+        background-color: rgba(255, 255, 255, 0.16);
         border-color: rgba(255, 255, 255, 0.30);
       }
       #lock     { background-image: image(url("${wlogoutIcons}/lock.png")); }
@@ -539,7 +539,6 @@ in
         color: #${c.text};
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       }
-      /* nudge all bar content ~2px down so icons sit vertically centred */
       window#waybar label { margin-top: 2px; }
       #custom-apple {
         padding: 0 12px;
@@ -560,7 +559,6 @@ in
         color: #${c.text};
         font-weight: 600;
       }
-      /* status icons: force the Nerd Font so glyphs never render as blank */
       #clock, #battery, #network, #pulseaudio, #backlight, #tray {
         font-family: "Monocraft", "JetBrainsMono Nerd Font";
         padding: 0 8px;
@@ -575,12 +573,10 @@ in
       #battery.critical:not(.charging) { color: #ff5f57; }
       #pulseaudio.muted { color: #${c.subtext}; }
       #network.disconnected { color: #ff5f57; }
-      /* subtle hover on the status cluster — feels "alive" without chips */
       #backlight:hover, #pulseaudio:hover, #network:hover, #battery:hover, #clock:hover {
         background: rgba(255, 255, 255, 0.10);
       }
 
-      /* ---- bottom dock (pinned apps) ---- */
       window#waybar.dock { background: transparent; border: none; }
       window#waybar.dock .modules-center {
         background: rgba(40, 40, 42, 0.5);

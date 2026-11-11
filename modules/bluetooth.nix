@@ -36,9 +36,7 @@ in
       enable = true;
       powerOnBoot = cfg.powerOnBoot;
       settings.General = {
-        # A2DP sink/source so headphones and speakers show up as audio devices.
         Enable = "Source,Sink,Media,Socket";
-        # Needed for battery-level reporting (blueman/bluetuith) and LE features.
         Experimental = true;
         FastConnectable = true;
       };

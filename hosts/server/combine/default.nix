@@ -16,7 +16,7 @@
     enable = true;
     port = 9000;
 
-    globalConfig.scrape_interval = "10s"; # "1m"
+    globalConfig.scrape_interval = "10s";
     scrapeConfigs = [
       {
         job_name = "s3";

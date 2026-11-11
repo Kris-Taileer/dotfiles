@@ -14,7 +14,7 @@ from common import disable_mouse, enable_mouse, poll_click
 DIR = Path(__file__).resolve().parent
 console = Console(width=4, highlight=False)
 
-POWER_ICON = "\U000f0425"  # 󰐥 nf-md-power
+POWER_ICON = "\U000f0425"
 
 
 def render() -> Text:
@@ -37,8 +37,6 @@ def open_menu() -> None:
             "window.padding.x=8",
             "-o",
             "window.padding.y=6",
-            # "-o",
-            # 'window.decorations="None"',
             "-e",
             "uv",
             "run",

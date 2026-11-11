@@ -8,12 +8,9 @@
         hide_cursor = true
       }
 
-      # require the password immediately on lock (grace is a top-level option)
       grace = 0
 
-      # frosted curtain = the wallpaper itself, lightly blurred (NOT dimmed to
-      # black — the wallpaper is a dark space scene, so keep brightness ~full so
-      # the accretion disk still glows through).
+      # kept near-full brightness so the wallpaper's accretion disk still glows
       background {
         monitor =
         path = ${config.home.homeDirectory}/.config/hypr/wallpaper.png
@@ -25,7 +22,6 @@
         vibrancy = 0.15
       }
 
-      # date — small, above the clock (macOS/iOS order)
       label {
         monitor =
         text = cmd[update:60000] date +'%A, %-d %B'
@@ -37,7 +33,6 @@
         valign = center
       }
 
-      # time — large, upper third
       label {
         monitor =
         text = cmd[update:1000] date +'%H:%M'
@@ -49,7 +44,6 @@
         valign = center
       }
 
-      # minimal password pill — lower centre, invisible until you type
       input-field {
         monitor =
         size = 300, 52

@@ -78,15 +78,6 @@
   };
   programs.gamemode.enable = true;
 
- # services.asus-numberpad-driver = {
- #  enable = false;
- #  layout = "up5401ea";
- #  wayland = true;
- #  waylandDisplay = "wayland-0";
- #  runtimeDir = "/run/user/1000/";
- # };
-
-
   virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
