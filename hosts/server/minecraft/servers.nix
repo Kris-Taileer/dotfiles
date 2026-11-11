@@ -11,8 +11,6 @@
     "d /run/marcraft 0750 minecraft minecraft -"
   ];
 
-  # networking.firewall.allowedUDPPorts = [ 24454 ];
-
   services.marcraft.zapusk = {
     enable = false;
 

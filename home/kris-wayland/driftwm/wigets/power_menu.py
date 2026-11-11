@@ -10,11 +10,11 @@ import termios
 import tty
 
 ITEMS = [
-    ("\U000f033e", "Lock", "lock"),  # 󰌾
-    ("\U000f04b2", "Suspend", "suspend"),  # 󰒲
-    ("\U000f0343", "Log out", "logout"),  # 󰍃
-    ("\U000f0709", "Reboot", "reboot"),  # 󰜉
-    ("\U000f0425", "Power off", "poweroff"),  # 󰐥
+    ("\U000f033e", "Lock", "lock"),
+    ("\U000f04b2", "Suspend", "suspend"),
+    ("\U000f0343", "Log out", "logout"),
+    ("\U000f0709", "Reboot", "reboot"),
+    ("\U000f0425", "Power off", "poweroff"),
 ]
 
 RED = "\033[31m"

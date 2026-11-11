@@ -19,7 +19,7 @@ def render() -> Text:
     year, month, day = now.year, now.month, now.day
 
     cal = calendar.monthcalendar(year, month)
-    content_lines = 2 + len(cal)  # header + day names + weeks
+    content_lines = 2 + len(cal)
 
     try:
         term_h = os.get_terminal_size().lines

@@ -1,10 +1,5 @@
 { pkgs, ... }:
 let
-  # driftshot: driftwm-native screenshots. Capture is done by the running
-  # compositor (`driftwm msg screenshot`), which is canvas-accurate and knows
-  # the focused window, so no output-coordinate math is needed. Helper tools
-  # are referenced by absolute store path; `driftwm` comes from the running
-  # system so the msg protocol always matches the live compositor.
   driftshot = pkgs.writeShellScriptBin "driftshot" ''
     set -euo pipefail
 

@@ -11,12 +11,12 @@ from rich.text import Text
 
 console = Console(width=22, highlight=False)
 
-REFRESH_INTERVAL = 600  # 10 minutes
+REFRESH_INTERVAL = 600
 cached_weather: dict | None = None
 last_fetch: float = 0
 
 
-RETRY_INTERVAL = 30  # retry quickly when offline
+RETRY_INTERVAL = 30
 
 
 def fetch_if_stale() -> dict | None:

@@ -83,18 +83,17 @@ for i in groups:
         ]
     )
 
-# --- synthwave palette (matches home/kris/theme.nix) ---
 colors = [
-    ["#0d0e1a", "#0d0e1a"],  # bg        (base)
-    ["#f5f3ff", "#f5f3ff"],  # fg        (text)
-    ["#262442", "#262442"],  # normal.black   (surface1)
-    ["#ff2e6d", "#ff2e6d"],  # normal.red     (red)
-    ["#39ff9e", "#39ff9e"],  # normal.green   (green)
-    ["#ffe14d", "#ffe14d"],  # normal.yellow  (yellow)
-    ["#4dd9ec", "#4dd9ec"],  # normal.blue    (blue)
-    ["#b15cff", "#b15cff"],  # normal.magenta (mauve)
-    ["#5ef1ff", "#5ef1ff"],  # bright.cyan    (sapphire)
-    ["#6e6a8c", "#6e6a8c"]   # bright.black   (overlay0)
+    ["#0d0e1a", "#0d0e1a"],
+    ["#f5f3ff", "#f5f3ff"],
+    ["#262442", "#262442"],
+    ["#ff2e6d", "#ff2e6d"],
+    ["#39ff9e", "#39ff9e"],
+    ["#ffe14d", "#ffe14d"],
+    ["#4dd9ec", "#4dd9ec"],
+    ["#b15cff", "#b15cff"],
+    ["#5ef1ff", "#5ef1ff"],
+    ["#6e6a8c", "#6e6a8c"]
 ]
 
 layout_theme = {
@@ -261,7 +260,7 @@ mouse = [
 ]
 
 dgroups_key_binder = None
-dgroups_app_rules = []  # type: list
+dgroups_app_rules = []
 follow_mouse_focus = True
 bring_front_click = False
 floats_kept_above = True

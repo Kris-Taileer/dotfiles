@@ -52,38 +52,24 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Tools Happ and its helper scripts call from the system PATH.
     environment.systemPackages = [
       cfg.package
       pkgs.net-tools
       pkgs.lsb-release
     ];
 
-    # HWID fix. Happ reads its hardware id from Qt's QSysInfo::machineUniqueId(),
-    # which on Linux comes from /var/lib/dbus/machine-id. NixOS defaults to
-    # dbus-broker, which (unlike the classic dbus-daemon) does not create that
-    # file, so the id is empty and the client shows a blank HWID. Linking it to
-    # the real /etc/machine-id fixes it.
-    #
-    # Note: keep happd (below) unsandboxed. systemd sandboxing (ProtectSystem,
-    # PrivateTmp, ...) enables a mount namespace whose machine-id bind-mount fails
-    # here with 226/NAMESPACE and breaks TUN mode.
+    # dbus-broker doesn't create /var/lib/dbus/machine-id, leaving Happ's HWID blank; link it.
+    # happd below must stay unsandboxed -- ProtectSystem/PrivateTmp breaks this bind-mount (226/NAMESPACE).
     systemd.tmpfiles.rules = [
       "L+ /var/lib/dbus/machine-id - - - - /etc/machine-id"
     ];
 
-    # Firewall + TUN module for Happ's TUN mode.
     networking.firewall.checkReversePath = "loose";
     networking.firewall.trustedInterfaces = [ cfg.tunInterface ];
     boot.kernelModules = [ "tun" ];
 
-    # Happ hard-codes /opt/happ for its binaries, so we materialise the immutable
-    # Nix store tree there. The copy runs only when the package changes, keeping
-    # everyday rebuilds fast. Happ's actual runtime state (routing, generated core
-    # configs) lives per-user under ~/.config/Happ, not under /opt/happ, so the
-    # materialised tree only needs to be readable/executable, never writable --
-    # making it world-writable would let any unprivileged local user replace the
-    # happd binary that systemd runs as root below.
+    # Materialised read-only, not world-writable -- it would let any local user replace
+    # the happd binary that systemd runs as root below.
     system.activationScripts.happ-opt = stringAfter [ "stdio" ] ''
       stamp=/opt/happ/.nix-store-path
       if [ "$(cat "$stamp" 2>/dev/null)" != "${cfg.package}" ]; then
@@ -96,14 +82,12 @@ in
       fi
     '';
 
-    # Privileged daemon that runs the TUN cores (sing-box / tun2proxy) as root.
     systemd.services.happd = {
       description = "Happ Process Control Daemon";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      # ExecStart is a fixed /opt/happ path rather than a Nix store path, so
-      # switch-to-configuration can't see a package bump from the unit alone;
-      # without this, happd would keep running the old binary after an upgrade.
+      # ExecStart is a fixed /opt/happ path, not a Nix store path, so switch-to-configuration
+      # can't see a package bump from the unit alone without this.
       restartTriggers = [ cfg.package ];
 
       path = with pkgs; [ iproute2 iptables procps net-tools ];

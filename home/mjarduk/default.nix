@@ -10,7 +10,6 @@
     ./ssh.nix
   ];
 
-  # Global packages that do not require complex Nix expressions
   home.packages = with pkgs; [
     nixd
     nil

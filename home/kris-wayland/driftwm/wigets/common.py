@@ -10,8 +10,6 @@ import urllib.request
 from collections import deque
 from pathlib import Path
 
-# ── Block digits (3x2 each) ──────────────────────────────────
-
 DIGITS = {
     "0": ["█▀█", "█▄█"],
     "1": [" ▀█", " ▄█"],
@@ -39,8 +37,6 @@ def render_big_time(time_str: str, *, colon_on: bool = True) -> tuple[str, str]:
     return " ".join(rows[0]), " ".join(rows[1])
 
 
-# ── Sparkline ────────────────────────────────────────────────
-
 SPARK = " ▁▂▃▄▅▆▇█"
 
 
@@ -60,8 +56,6 @@ def progress_bar(pct: float, width: int = 10) -> str:
     filled = round(pct / 100 * width)
     return "━" * filled + " " * (width - filled)
 
-
-# ── Nerd Font icons ─────────────────────────────────────────
 
 ICON = {
     "cpu": "\uf4bc",
@@ -95,23 +89,21 @@ ICON = {
     "bt_on": "󰂯",
     "bt_off": "󰂲",
     "bt_connected": "󰂱",
-    "caffeine": "\uec15",  # nf-md-coffee-steam
+    "caffeine": "\uec15",
 }
 
-# ── Weather icons (Unicode, no Nerd Font needed) ────────────
-
 WEATHER_ICON = {
-    "clear": chr(0xF0599),  # 󰖙
-    "sunny": chr(0xF0599),  # 󰖙
-    "partly": chr(0xF0595),  # 󰖕
-    "cloudy": chr(0xF0590),  # 󰖐
-    "overcast": chr(0xF0590),  # 󰖐
-    "rain": chr(0xF0597),  # 󰖗
-    "drizzle": chr(0xF0597),  # 󰖗
-    "thunder": chr(0xF0593),  # 󰖓
-    "snow": chr(0xF0598),  # 󰖘
-    "mist": chr(0xF0591),  # 󰖑
-    "fog": chr(0xF0591),  # 󰖑
+    "clear": chr(0xF0599),
+    "sunny": chr(0xF0599),
+    "partly": chr(0xF0595),
+    "cloudy": chr(0xF0590),
+    "overcast": chr(0xF0590),
+    "rain": chr(0xF0597),
+    "drizzle": chr(0xF0597),
+    "thunder": chr(0xF0593),
+    "snow": chr(0xF0598),
+    "mist": chr(0xF0591),
+    "fog": chr(0xF0591),
 }
 
 
@@ -120,10 +112,7 @@ def weather_icon(desc: str) -> str:
     for key, icon in WEATHER_ICON.items():
         if key in desc_lower:
             return icon
-    return chr(0xF0595)  # 󰖕 partly cloudy as default
-
-
-# ── Data readers ─────────────────────────────────────────────
+    return chr(0xF0595)
 
 
 class CpuTracker:
@@ -190,7 +179,6 @@ def _battery_hours(ps: Path, status: str) -> float | None:
     """Compute remaining battery hours from sysfs counters, or None."""
     if status == "full":
         return None
-    # Try energy/power (µWh / µW) first, then charge/current (µAh / µA).
     for now_file, rate_file, full_file in (
         ("energy_now", "power_now", "energy_full"),
         ("charge_now", "current_now", "charge_full"),
@@ -428,7 +416,6 @@ def get_tuned_profile() -> str:
             timeout=2,
             check=False,
         )
-        # Output: "Current active profile: balanced"
         for line in result.stdout.splitlines():
             if ":" in line:
                 return line.split(":", 1)[1].strip()
@@ -440,9 +427,9 @@ def get_tuned_profile() -> str:
 TUNED_PROFILES = ["powersave", "balanced", "latency-performance"]
 
 TUNED_ICON = {
-    "powersave": "\U000f032a",  # 󰌪 nf-md-leaf
-    "balanced": "",  # no icon for default mode
-    "latency-performance": "\U000f04c5",  # 󰓅 nf-md-speedometer
+    "powersave": "\U000f032a",
+    "balanced": "",
+    "latency-performance": "\U000f04c5",
 }
 
 
@@ -494,7 +481,6 @@ def _bt_battery(mac: str) -> int | None:
         )
         for line in result.stdout.splitlines():
             if "Battery Percentage" in line:
-                # Format: "	Battery Percentage: 0x42 (66)"
                 return int(line.rsplit("(", 1)[1].rstrip(")"))
     except (FileNotFoundError, subprocess.TimeoutExpired, IndexError, ValueError):
         pass
@@ -540,8 +526,6 @@ def get_bluetooth() -> str | None:
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return None
 
-
-# ── Mouse click handling ────────────────────────────────────
 
 _orig_termios: list | None = None
 

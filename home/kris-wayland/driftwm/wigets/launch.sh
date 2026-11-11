@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Launch all driftwm dashboard widgets as foot terminals.
 DIR="$(cd "$(dirname "$0")" && pwd)"
 CFG="$HOME/.config/driftwm/foot-widget.ini"
 

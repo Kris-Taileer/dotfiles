@@ -40,8 +40,7 @@ console = Console(width=WIDTH, highlight=False)
 cpu_history: deque[float] = deque(maxlen=10)
 ram_history: deque[float] = deque(maxlen=10)
 
-# Slow-poll cache for subprocess-dependent data (volume, SSID, bluetooth, tuned profile)
-SLOW_POLL_INTERVAL = 2  # seconds
+SLOW_POLL_INTERVAL = 2
 _slow_state: dict = {"cache": {}, "counter": 0}
 
 
@@ -63,7 +62,6 @@ def _get_slow_data() -> dict:
 # Actions: list[str] = spawn command, str = special action, tuple = bar handler
 click_map: dict[int, list[str] | str | tuple] = {}
 
-# Click actions per section
 ACTION_CPU = ["alacritty", "-e", "btop"]
 ACTION_RAM = ["alacritty", "-e", "btop"]
 ACTION_VOL = ["pavucontrol"]
@@ -89,8 +87,6 @@ def _set_volume(pct: int) -> None:
         stderr=subprocess.DEVNULL,
     )
 
-
-# ── Caffeine (swayidle toggle) ─────────────────────────────
 
 SWAYIDLE_CMD = [
     "swayidle",
@@ -121,7 +117,6 @@ _caffeine_on = not _is_swayidle_running()
 def _toggle_caffeine() -> None:
     global _caffeine_on  # noqa: PLW0603
     if _caffeine_on:
-        # Turn off caffeine → restart swayidle
         subprocess.Popen(
             SWAYIDLE_CMD,
             stdout=subprocess.DEVNULL,
@@ -129,7 +124,6 @@ def _toggle_caffeine() -> None:
         )
         _caffeine_on = False
     else:
-        # Turn on caffeine → kill swayidle
         subprocess.run(
             ["killall", "swayidle"],
             stdout=subprocess.DEVNULL,
@@ -321,9 +315,7 @@ try:
                         toggle_fn()
                     else:
                         cycle_fn()
-                        _slow_state["counter"] = (
-                            SLOW_POLL_INTERVAL  # refresh next render
-                        )
+                        _slow_state["counter"] = SLOW_POLL_INTERVAL
                 elif isinstance(action, tuple):
                     kind, setter, fallback = action
                     pct = _bar_pct_from_x(x)

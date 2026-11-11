@@ -60,8 +60,6 @@
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = with pkgs; [ intel-media-driver vpl-gpu-rt ];
 
-  # Prevent Tiger Lake thermal throttling, which shows up in osu!lazer as
-  # periodic micro-stutter. Pairs with gamemode's performance governor.
   services.thermald.enable = true;
 
   environment.etc."ly/black_hole.dur".source = ./black_hole.dur;
@@ -73,8 +71,8 @@
       dur_file_path = "/etc/ly/black_hole.dur";
       blank_password = true;
       term_reset_cmd = "tput reset";
-      fg = "0x00FFFFFF"; # white
-      bg = "0x00000000"; # black
+      fg = "0x00FFFFFF";
+      bg = "0x00000000";
       bigclock = "en";
       bigclock_12hr = false;
       bigclock_seconds = true;
@@ -157,20 +155,12 @@
   services.tailscale.enable = true;
   services.openssh.enable = true;
 
-  # --- Battery: keep these dev daemons configured but NOT autostarted at boot ---
-  # They idle-drain (couchdb's beam.smp alone ~2-3% CPU). Docker + libvirtd stay
-  # socket-activated (start on first `docker`/virt-manager use). CouchDB and
-  # Tailscale start on demand:
-  #   systemctl start couchdb
-  #   sudo systemctl start tailscaled && sudo tailscale up
   virtualisation.docker.enableOnBoot   = false;
   systemd.services.couchdb.wantedBy    = lib.mkForce [ ];
   systemd.services.libvirtd.wantedBy   = lib.mkForce [ ];
   systemd.services.tailscaled.wantedBy = lib.mkForce [ ];
 
-  # Dedicated tunnel to the VPS (77.91.87.139) so the Minecraft server (behind CGNAT
-  # here) is reachable through the VPS's public IP, independent of Amnezia's own
-  # WireGuard/AmneziaWG stack running there.
+  # Tunnel to the VPS so Minecraft (behind CGNAT) is reachable via its public IP.
   networking.wg-quick.interfaces.wg-mc = {
     address = [ "10.23.42.2/30" ];
     privateKeyFile = "/etc/wg-mc-private.key";
@@ -186,8 +176,6 @@
 
   programs.driftwm.enable = true;
 
-  # macOS-like Wayland compositor. Kept alongside driftwm (both are selectable
-  # in ly); Plasma 6 was removed in favour of this lighter setup.
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -238,14 +226,12 @@
   ];
 
   fonts.packages = with pkgs; [
-    monocraft    # system-wide font (Minecraft-style monospace)
+    monocraft
     nerd-fonts.jetbrains-mono
     inter
     nerd-fonts.symbols-only
   ];
 
-  # Monocraft everywhere. Nerd Font kept as fallback so icon glyphs (bar,
-  # symbols) that Monocraft lacks still render.
   fonts.fontconfig.defaultFonts = {
     monospace = [ "Monocraft" "JetBrainsMono Nerd Font" ];
     sansSerif = [ "Monocraft" "JetBrainsMono Nerd Font" ];
@@ -262,12 +248,8 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  # xwayland-satellite 0.8.1 (the version in our pinned nixpkgs) panics with
-  # "Invalid size for positioner's anchor rectangle" on Ghidra's zero-size splash
-  # xdg_positioner and takes the whole X server down with it — so Ghidra's GUI
-  # dies during startup under driftwm. 0.8.2 turns SPLASH windows into fixed-size
-  # toplevels (no positioner), which removes the crash and makes Ghidra start
-  # reliably. Drop this override once our nixpkgs ships xwayland-satellite >= 0.8.2.
+  # Pinned xwayland-satellite 0.8.2: 0.8.1 panics on Ghidra's zero-size splash
+  # xdg_positioner and takes the X server down with it. Drop once nixpkgs catches up.
   nixpkgs.overlays = [
     (final: prev: {
       xwayland-satellite = prev.xwayland-satellite.overrideAttrs (old: rec {

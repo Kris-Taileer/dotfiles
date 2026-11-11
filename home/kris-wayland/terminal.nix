@@ -52,9 +52,7 @@ in
     }
   '';
 
-  # Ghostty — used for Neovim so we get GPU cursor shaders (alacritty can't do
-  # custom shaders). Configured via plain files (not programs.ghostty) so it
-  # deploys as a dirty-tree change without needing to `git add` new modules.
+  # Plain files, not programs.ghostty, so new shader/config files don't need `git add`.
   home.packages = [ pkgs.ghostty ];
 
   home.file.".config/ghostty/config".text = ''
@@ -70,26 +68,23 @@ in
     custom-shader-animation = always
   '';
 
-  # Neovide-like cursor smear (github.com/sahaj-b/ghostty-cursor-shaders).
   home.file.".config/ghostty/shaders/cursor_warp.glsl".text = ''
-// sRGB -> Linear conversion (needed because Ghostty passes sRGB values but the shader pipeline operates in linear color space)
+// Ghostty passes sRGB values but the shader pipeline is linear.
 vec3 sRGBToLinear(vec3 c) {
     return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), c));
 }
 
-// --- CONFIGURATION ---
-vec4 TRAIL_COLOR = vec4(sRGBToLinear(iCurrentCursorColor.rgb), iCurrentCursorColor.a); // for custom color: vec4(0.2, 0.6, 1.0, 0.5); (wrap in sRGBToLinear for correct brightness)
-const float DURATION = 0.2; // total animation time
-const float TRAIL_SIZE = 0.8; // 0.0 = all corners move together. 1.0 = max smear (leading corners jump instantly)
-const float THRESHOLD_MIN_DISTANCE = 1.5; // min distance to show trail (units of cursor height)
-const float BLUR = 1.0; // blur size in pixels (for antialiasing)
-const float TRAIL_THICKNESS = 1.0;  // 1.0 = full cursor height, 0.0 = zero height, >1.0 = funky aah
+vec4 TRAIL_COLOR = vec4(sRGBToLinear(iCurrentCursorColor.rgb), iCurrentCursorColor.a);
+const float DURATION = 0.2;
+const float TRAIL_SIZE = 0.8;
+const float THRESHOLD_MIN_DISTANCE = 1.5;
+const float BLUR = 1.0;
+const float TRAIL_THICKNESS = 1.0;
 const float TRAIL_THICKNESS_X = 0.9;
 
-const float FADE_ENABLED = 0.0; // 1.0 to enable fade gradient along the trail, 0.0 to disable
-const float FADE_EXPONENT = 5.0; // exponent for fade gradient along the trail
+const float FADE_ENABLED = 0.0;
+const float FADE_EXPONENT = 5.0;
 
-// --- CONSTANTS for easing functions ---
 const float PI = 3.14159265359;
 const float C1_BACK = 1.70158;
 const float C2_BACK = C1_BACK * 1.525;
@@ -99,9 +94,6 @@ const float C5_ELASTIC = (2.0 * PI) / 4.5;
 const float SPRING_STIFFNESS = 9.0;
 const float SPRING_DAMPING = 0.9;
 
-// --- EASING FUNCTIONS ---
-
-// EaseOutCirc
 float ease(float x) {
     return sqrt(1.0 - pow(x - 1.0, 2.0));
 }
@@ -112,8 +104,6 @@ float getSdfRectangle(in vec2 p, in vec2 xy, in vec2 b)
     return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
 }
 
-// Based on Inigo Quilez's 2D distance functions article: https://iquilezles.org/articles/distfunctions2d/
-// Potencially optimized by eliminating conditionals and loops to enhance performance and reduce branching
 float seg(in vec2 p, in vec2 a, in vec2 b, inout float s, float d) {
     vec2 e = b - a;
     vec2 w = p - a;
@@ -151,7 +141,6 @@ float antialising(float distance, float blurAmount) {
   return 1. - smoothstep(0., normalize(vec2(blurAmount, blurAmount), 0.).x, distance);
 }
 
-// Determines animation duration based on a corner's alignment with the move direction(dot product)
 float getDurationFromDot(float dot_val, float DURATION_LEAD, float DURATION_SIDE, float DURATION_TRAIL) {
     float isLead = step(0.5, dot_val);
     float isSide = step(-0.5, dot_val) * (1.0 - isLead);
